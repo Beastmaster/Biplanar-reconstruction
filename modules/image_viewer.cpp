@@ -109,6 +109,17 @@ void image_viewer::DisableSeedWidgets()
 	m_profile_seeds->Disable();
 }
 
+void image_viewer::SetFrontalSeedPos(unsigned int seedID, double pos[3])
+{
+	m_frontal_seeds->SetSeedDisplayPosition(seedID, pos);
+}
+
+void image_viewer::AddFrontalSeed(double pos[3])
+{
+	m_frontal_seeds->AddSeed(pos);
+	m_frontal_win->Render();
+}
+
 
 
 

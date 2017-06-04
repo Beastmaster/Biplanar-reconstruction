@@ -32,6 +32,16 @@ QMainWindow(parent), ui(new Ui::MainWindow)
 	m_viewer->SetFrontalWindow(ui->frontal_view->GetRenderWindow());
 	m_viewer->SetProfileWindow(ui->profile_view->GetRenderWindow());
 	m_viewer->Set3dWindow(ui->td_view->GetRenderWindow());
+
+
+
+	// default init for debug
+#ifdef DEBUG_MODE_QIN
+	std::string test_folder = "F:/Newdata_5_31/June/16-06-01_Y5726156";
+	on_Load_folder(test_folder);
+	connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(on_addseed()));
+#endif
+
 }
 
 MainWindow:: ~MainWindow()

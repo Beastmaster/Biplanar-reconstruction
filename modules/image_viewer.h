@@ -39,7 +39,9 @@ public:
 
 	void EnableSeedWidgets();
 	void DisableSeedWidgets();
-
+	
+	void SetFrontalSeedPos(unsigned int seedID, double pos[3]);
+	void AddFrontalSeed(double pos[3]);
 
 private:
 	image_viewer();

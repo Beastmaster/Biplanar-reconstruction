@@ -29,6 +29,10 @@ Date: 2017/6/3
 
 #include "image_viewer.h"
 
+
+
+#define DEBUG_MODE_QIN
+
 namespace Ui {
 	class MainWindow;
 }
@@ -49,6 +53,12 @@ public slots:
 	void Open_Folder_Warning();
 	void on_EnablePick();
 	void on_DisablePick();
+
+	void on_addseed() {
+		double pos[2] = { 100,100};
+		m_viewer->AddFrontalSeed(pos );
+		std::cout << "movexx" << std::endl;
+	};
 	
 signals:
 void open_folder_signal(std::string path);

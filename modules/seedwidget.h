@@ -14,6 +14,8 @@ reference: http://www.vtk.org/Wiki/VTK/Examples/Widgets/SeedWidgetImage
 #include <vtkCommand.h>
 #include <vtkImageActor.h>
 #include <vtkPointHandleRepresentation2D.h>
+#include <vtkPointHandleRepresentation3D.h>
+#include "vtkProperty.h"
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty2D.h>
 #include <vtkRenderer.h>
@@ -88,6 +90,9 @@ public:
 	void Enable();
 	void Disable();
 
+	void SetSeedDisplayPosition(unsigned int seedID, double pos[3]);
+	void AddSeed(double pos[3]);
+
 
 protected:
 	seedwidgets_man();
@@ -96,6 +101,8 @@ protected:
 private:
 	vtkSmartPointer<vtkSeedWidget> m_seedWidget;
 	vtkSmartPointer<vtkRenderWindowInteractor> m_interactor;
+	vtkSmartPointer<vtkSeedRepresentation>  m_seedRepresentation;
+	vtkSmartPointer<vtkPointHandleRepresentation3D> m_handle;
 };
 
 
