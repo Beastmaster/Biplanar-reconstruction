@@ -14,9 +14,11 @@ A tool to reconstruct spine from biplanar X-ray or EOS image. Landmarks are sele
 3. Cmake, v>2.8
 
 ### 2. Image direction
-![Coordinate system](docs/CoordinateSystem.JPG)
+![Coordinate system](resources/CoordinateSystem.JPG)
 
 ### 3. File structure
 
 ## Usage
 To be continued...
+
+
