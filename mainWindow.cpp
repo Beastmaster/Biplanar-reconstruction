@@ -36,7 +36,7 @@ QMainWindow(parent), ui(new Ui::MainWindow)
 
 
 	// default init for debug
-#ifdef DEBUG_MODE_QIN
+#ifdef DEBUG_MODE
 	std::string test_folder = "F:/Newdata_5_31/June/16-06-01_Y5726156";
 	on_Load_folder(test_folder);
 	connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(on_addseed()));

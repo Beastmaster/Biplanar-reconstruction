@@ -19,8 +19,13 @@ Date: 2017/6/3
 #include "vtkRenderer.h"
 #include "vtkImageData.h"
 #include "vtkImageMapToWindowLevelColors.h"
+
+#include "module_config.h"
 #include "interactor_style.h"
 #include "seedwidget.h"
+
+
+
 
 class image_viewer :public vtkObject
 {
@@ -67,6 +72,8 @@ private:
 
 	vtkSmartPointer<seedwidgets_man> m_frontal_seeds;
 	vtkSmartPointer<seedwidgets_man> m_profile_seeds;
+
+	vtkSmartPointer<vtkSeedImageCallback> m_seeds_callback;
 
 };
 

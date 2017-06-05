@@ -21,6 +21,7 @@ seedwidget.cpp
 
 set(
 HEAD
+module_config.h
 dicom_retrieve.h
 interactor_style.h
 custom_callbacks.h

@@ -1,67 +1,22 @@
-# Navigation example project
-----
-## Requirements
-- Qt5
-- VTK6
-- ITK4
+# Manual spine reconstruction
 
 ----
-## Modules
-### 1. MainWindow
-This is full example illustrating how the project work. 
-
-**Functions** 
-
-   - Load a 3d image (.nii format)
-   - Orthogonal View
-   - MarchingCubes to create a 3D model
-   - Configure 2 kinds of tracking devices
-   - Landmark Registration
-   - ICP registration
-
-### 2. Calibration Tool(Submodule of MainWindow)
-
-### 3. PivotCalibration
-
-### 4. VisualizationUtil
-Custom visualization module. This module is for private. Free to delete.
-
-### 5. PolarisVicra
-PolarisVicra API
-
-### 6. ATC3DG
-ATC3DG: trackStar API
-
-
-### 7. vtkTrackerUtil
-vtkTrackerUtil is a base module:
-
-- **utilities**:
-
-Quaternion, 2D array, vtkMatrix4x4 conversions.
-
-- **Configuration Parser**
-
-- **MarkCapture**:
-
-Real world position capture
-
-- **Registration**:
-
-Landmark registration; ICP registration
+## Objective
+A tool to reconstruct spine from biplanar X-ray or EOS image. Landmarks are selected by hand or automatic methods. Registration methods are employed to align vertebra models to selected landmarks. 
 
 
 ----
+## Implementation details
+
+### 1. 3rd party libraries
+1. Qt, version >= 5.1
+2. VTK, v>= 6.3
+3. Cmake, v>2.8
+
+### 2. Image direction
+![Coordinate system](docs/CoordinateSystem.JPG)
+
+### 3. File structure
+
 ## Usage
-
-- Use cmake to configure the project
-- Modules for tracking are nested so you should take them as a whole.
-- All the *_test folders are examples for testing. They can be deleted.
-- IP_check is also useless
-
-
-
-
-
-
-
+To be continued...

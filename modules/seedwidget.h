@@ -25,60 +25,36 @@ reference: http://www.vtk.org/Wiki/VTK/Examples/Widgets/SeedWidgetImage
 #include <vtkSeedRepresentation.h>
 #include <vtkSmartPointer.h>
 
+#include "module_config.h"
 
 class vtkSeedImageCallback : public vtkCommand
 {
 public:
 	static vtkSeedImageCallback *New()
-	{
-		return new vtkSeedImageCallback;
-	}
-
+	{return new vtkSeedImageCallback;}
 	vtkSeedImageCallback() {}
 
-	virtual void Execute(vtkObject*, unsigned long event, void *calldata)
-	{
-		if (event == vtkCommand::PlacePointEvent)
-		{
-			std::cout << "Placing point..." << std::endl;
-			std::cout << "There are now " << this->SeedRepresentation->GetNumberOfSeeds() << " seeds." << std::endl;
-			for (unsigned int seedId = 0; seedId < this->SeedRepresentation->GetNumberOfSeeds(); seedId++)
-			{
-				double pos[3];
-				this->SeedRepresentation->GetSeedDisplayPosition(seedId, pos);
-				std::cout << "Seed " << seedId << " : (" << pos[0] << " " << pos[1] << " " << pos[2] << ")" << std::endl;
-			}
-			return;
-		}
-		if (event == vtkCommand::InteractionEvent)
-		{
-			std::cout << "Interaction..." << std::endl;
-			if (calldata)
-			{
-				double pos[3];
-				this->SeedRepresentation->GetSeedDisplayPosition(0, pos);
-				std::cout << "Moved to (" << pos[0] << " " << pos[1] << " " << pos[2] << ")" << std::endl;
-			}
-			return;
-		}
-	}
-
-	void SetRepresentation(vtkSmartPointer<vtkSeedRepresentation> rep)
-	{
-		this->SeedRepresentation = rep;
-	}
-	void SetWidget(vtkSmartPointer<vtkSeedWidget> widget)
-	{
-		this->SeedWidget = widget;
-	}
+	virtual void Execute(vtkObject*, unsigned long event, void *calldata);
+	void SetFrontalRepresentation(vtkSmartPointer<vtkSeedRepresentation> rep);
+	void SetFrontalWidget(vtkSmartPointer<vtkSeedWidget> widget);
+	void SetProfileRepresentation(vtkSmartPointer<vtkSeedRepresentation> rep);
+	void SetProfileWidget(vtkSmartPointer<vtkSeedWidget> widget);
 
 private:
-	vtkSeedRepresentation* SeedRepresentation;
-	vtkSeedWidget* SeedWidget;
+	vtkSeedRepresentation* m_FrontalSeedRepresentation;
+	vtkSeedWidget* m_FrontalSeedWidget;
+	vtkSeedRepresentation* m_ProfileSeedRepresentation;
+	vtkSeedWidget* m_ProfileSeedWidget;
+	
+	std::vector<std::vector<double> > m_coordinate;
 };
 
 
-
+enum View_Direction
+{
+	Frontal,
+	Profile
+};
 
 class seedwidgets_man : public vtkObject
 {
@@ -91,6 +67,8 @@ public:
 	void Disable();
 
 	void SetSeedDisplayPosition(unsigned int seedID, double pos[3]);
+	void SetDirection(View_Direction);        // set after
+	void SetCallBack(vtkSeedImageCallback*);  // set first
 	void AddSeed(double pos[3]);
 
 
@@ -103,6 +81,8 @@ private:
 	vtkSmartPointer<vtkRenderWindowInteractor> m_interactor;
 	vtkSmartPointer<vtkSeedRepresentation>  m_seedRepresentation;
 	vtkSmartPointer<vtkPointHandleRepresentation3D> m_handle;
+	View_Direction m_direction = Frontal;
+	vtkSmartPointer<vtkSeedImageCallback> seedCallback;
 };
 
 
@@ -111,3 +91,4 @@ private:
 
 
 #endif // !_SEEDWIDGETS_CALLBACKS_H_
+

@@ -29,10 +29,6 @@ Date: 2017/6/3
 
 #include "image_viewer.h"
 
-
-
-#define DEBUG_MODE_QIN
-
 namespace Ui {
 	class MainWindow;
 }

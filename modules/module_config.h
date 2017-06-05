@@ -1,0 +1,30 @@
+/*
+Author: QIN Shuo
+Organization: RC-MIC (CUHK)
+Date: 2017/6/5
+
+Description:
+	Module configuration flags
+
+*/
+
+#ifndef _MODULE_CONFIG_H_
+
+
+
+
+#define DEBUG_MODE
+
+
+
+#define STD_COUT(X) std::cout<<X<<std::endl;
+
+
+
+
+
+
+
+
+#endif // !_MODULE_CONFIG_H_
+
