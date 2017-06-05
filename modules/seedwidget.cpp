@@ -13,7 +13,7 @@ reference: http://www.vtk.org/Wiki/VTK/Examples/Widgets/SeedWidgetImage
 
 #include "vtkObjectFactory.h"
 #include "vtkHandleWidget.h"
-
+#include "vtkCoordinate.h"
 
 
 void vtkSeedImageCallback::SetFrontalRepresentation(vtkSmartPointer<vtkSeedRepresentation> rep)
@@ -52,18 +52,15 @@ void vtkSeedImageCallback::Execute(vtkObject*, unsigned long event, void *callda
 		{
 			double pos[3];
 			int id = num_front_seeds - 1;
-			//m_FrontalSeedRepresentation->GetSeedDisplayPosition(id,pos);
 			m_FrontalSeedRepresentation->GetSeedWorldPosition(id,pos);
 			std::vector<double> tmp_pos(pos, pos + sizeof(pos) / sizeof(double));
 			m_coordinate.push_back(tmp_pos);
-#ifdef DEBUG_MODE
-			STD_COUT(pos[0] << "," << pos[1]);
-#endif // !DEBUG_MODE
 
 			// add seeds manually
+			double new_pos[3]; memset(new_pos, 0, 3 * sizeof(double));
+			new_pos[0] = 100;  new_pos[1] = pos[1];
 			auto tmp_seed = m_ProfileSeedWidget->CreateNewHandle();
-			//tmp_seed->GetHandleRepresentation()->SetDisplayPosition(pos);
-			tmp_seed->GetHandleRepresentation()->SetWorldPosition(pos);
+			tmp_seed->GetHandleRepresentation()->SetWorldPosition(new_pos);
 			tmp_seed->SetEnabled(1);
 			m_ProfileSeedWidget->GetInteractor()->GetRenderWindow()->Render();
 		}
@@ -71,58 +68,83 @@ void vtkSeedImageCallback::Execute(vtkObject*, unsigned long event, void *callda
 		{
 			double pos[3];
 			int id = num_profi_seeds - 1;
-			//m_ProfileSeedRepresentation->GetSeedDisplayPosition(id, pos);
 			m_ProfileSeedRepresentation->GetSeedWorldPosition(id, pos);
-#ifdef DEBUG_MODE
-			STD_COUT(pos[0] << "," << pos[1]);
-#endif // !DEBUG_MODE
+
 			std::vector<double> tmp_pos(3, 0.0);
-			tmp_pos[1] = pos[0];
-			tmp_pos[2] = pos[1];
+			tmp_pos[1] = pos[1];
+			tmp_pos[2] = pos[0];
 			m_coordinate.push_back(tmp_pos);
 
 			// add seeds manually
+			double new_pos[3]; memset(new_pos, 0, 3 * sizeof(double));
+			new_pos[0] = 100;new_pos[1] = pos[1];
 			auto tmp_seed = m_FrontalSeedWidget->CreateNewHandle();
-			//tmp_seed->GetHandleRepresentation()->SetDisplayPosition(pos);
-			tmp_seed->GetHandleRepresentation()->SetWorldPosition(pos);
+			tmp_seed->GetHandleRepresentation()->SetWorldPosition(new_pos);
 			tmp_seed->SetEnabled(1);
 			m_FrontalSeedWidget->GetInteractor()->GetRenderWindow()->Render();
 		}
-#ifdef DEBUG_MODE
-		//std::cout << "Number of frontal seeds before:" << num_front_seeds << std::endl;
-		//std::cout << "Number of frontal seeds after:" << this->m_FrontalSeedRepresentation->GetNumberOfSeeds() <<std::endl;
-		//std::cout << "Number of profile seeds before:" << num_profi_seeds << std::endl;
-		//std::cout << "Number of profile seeds after:" << this->m_ProfileSeedRepresentation->GetNumberOfSeeds() << std::endl;
-		//STD_COUT("Number of stored points: " << m_coordinate.size());
-#endif // DEBUG_MODE
 		return;
 	}
 	if (event == vtkCommand::InteractionEvent)
 	{
-#ifdef DEBUG_MODE
-		//STD_COUT("Interaction... Update all seed position");
-#endif // DEBUG_MODE
 		if (calldata)
 		{
-			
+			for (size_t i = 0; i < m_coordinate.size(); i++)
+			{
+				auto world2display = [](vtkRenderer* renderer, double* coor, double* nw) {
+					vtkSmartPointer<vtkCoordinate> coordinate =
+						vtkSmartPointer<vtkCoordinate>::New();
+					coordinate->SetCoordinateSystemToWorld();
+					coordinate->SetValue(coor[0], coor[1], 0);
+					double* world = coordinate->GetComputedDoubleDisplayValue(renderer);
+					nw[0] = world[0]; nw[1] = world[1]; nw[2] = world[2];
+				};
 
-			//this->SeedRepresentation->GetSeedDisplayPosition(0, pos);
-			//std::cout << "Moved to (" << pos[0] << " " << pos[1] << " " << pos[2] << ")" << std::endl;
+				auto display2world = [](vtkRenderer* renderer, double* coor, double* nw) {
+					vtkSmartPointer<vtkCoordinate> coordinate =
+						vtkSmartPointer<vtkCoordinate>::New();
+					coordinate->SetCoordinateSystemToDisplay();
+					coordinate->SetValue(coor[0], coor[1], 0);
+					double* world = coordinate->GetComputedWorldValue(renderer);
+					nw[0] = world[0]; nw[1] = world[1]; nw[2] = world[2];
+				};
 
-			//double* pos_frontal = new double[3]; memset(pos_frontal, 0, 3 * sizeof(double));
-			//double* pos_profile = new double[3]; memset(pos_profile, 0, 3 * sizeof(double));
-			//for (size_t i = 0; i < m_coordinate.size(); i++)
-			//{
-			//	pos_frontal[0] = m_coordinate.at(i).at(0);
-			//	pos_frontal[1] = m_coordinate.at(i).at(1);				
-			//	pos_profile[0] = m_coordinate.at(i).at(1);
-			//	pos_profile[1] = m_coordinate.at(i).at(2);
-			//}
+				double pos_frontal[3]; memset(pos_frontal, 0, 3 * sizeof(double));
+				double pos_profile[3]; memset(pos_profile, 0, 3 * sizeof(double));
 
-		}
+				if (m_FrontalSeedWidget->GetWidgetState() == 8 )
+				{
+					this->m_FrontalSeedRepresentation->GetSeedWorldPosition(i, pos_frontal);
+					m_coordinate[i][0] = pos_frontal[0];  // update x axis				
+					m_coordinate[i][1] = pos_frontal[1];  // update y axis
+				}
+				else if(m_ProfileSeedWidget->GetWidgetState() == 8)
+				{
+					this->m_ProfileSeedRepresentation->GetSeedWorldPosition(i, pos_profile);
+					m_coordinate[i][2] = pos_profile[0];  // update z axis
+					m_coordinate[i][1] = pos_profile[1];  // update y axis
+				}
+				else
+					return;
+				
+				// update display position & convert world coordinate to display coordinate
+				pos_frontal[0] = m_coordinate[i][0];
+				pos_frontal[1] = m_coordinate[i][1];
+
+				pos_profile[0] = m_coordinate[i][2];
+				pos_profile[1] = m_coordinate[i][1];
+
+				m_FrontalSeedRepresentation->GetHandleRepresentation(i)->SetWorldPosition(pos_frontal);
+				m_ProfileSeedRepresentation->GetHandleRepresentation(i)->SetWorldPosition(pos_profile);
+				m_FrontalSeedWidget->Render();
+				m_ProfileSeedWidget->Render();
+
+			} // end for
+		}  // end if calldata
 		return;
-	}
+	} // end if (event == vtkCommand::InteractionEvent)
 }
+
 
 
 
@@ -143,33 +165,33 @@ void seedwidgets_man::Disable()
 {
 	m_seedWidget->Off();
 }
-void seedwidgets_man::SetSeedDisplayPosition(unsigned int seedID, double pos[3])
+void seedwidgets_man::SetSeedWorldPosition(unsigned int seedID, double pos[3])
 {
 	int total_seeds = m_seedRepresentation->GetNumberOfSeeds();
 	if (total_seeds<=seedID)
 		return;
 
-	m_seedRepresentation->SetSeedDisplayPosition(seedID,pos);
+	m_seedRepresentation->GetHandleRepresentation(seedID)->SetWorldPosition(pos);
 	m_interactor->GetRenderWindow()->Render();
 }
 
 void seedwidgets_man::SetDirection(View_Direction dir)
 {
 	m_direction = dir;
-	if (m_direction == Frontal)
+	
+	if (dir == Frontal)
 	{
 		seedCallback->SetFrontalRepresentation(m_seedRepresentation);
 		seedCallback->SetFrontalWidget(m_seedWidget);
 	}
-	else if (m_direction == Profile)
+	
+	if (dir == Profile)
 	{
 		seedCallback->SetProfileRepresentation(m_seedRepresentation);
 		seedCallback->SetProfileWidget(m_seedWidget);
 	}
-
 	m_seedWidget->AddObserver(vtkCommand::PlacePointEvent, seedCallback);
 	m_seedWidget->AddObserver(vtkCommand::InteractionEvent, seedCallback);
-	//m_seedWidget->AddObserver(vtkCommand::EnterEvent, seedCallback);
 }
 
 void seedwidgets_man::SetCallBack(vtkSeedImageCallback * callback)
@@ -205,6 +227,7 @@ seedwidgets_man::seedwidgets_man()
 seedwidgets_man::~seedwidgets_man()
 {
 }
+
 
 
 

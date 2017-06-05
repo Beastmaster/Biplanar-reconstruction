@@ -15,7 +15,6 @@ Date: 2017/6/3
 vtkStandardNewMacro(image_viewer);
 image_viewer::image_viewer()
 {
-
 	m_frontal_win = vtkSmartPointer<vtkRenderWindow>::New();
 	m_profile_win = vtkSmartPointer<vtkRenderWindow>::New();
 	m_3d_win = vtkSmartPointer<vtkRenderWindow>::New();
@@ -74,7 +73,7 @@ void image_viewer::SetFrontalImage(vtkImageData* im)
 	m_frontal_seeds = vtkSmartPointer<seedwidgets_man>::New();
 	m_frontal_seeds->SetInteractor(m_frontal_win->GetInteractor());
 	m_frontal_seeds->SetCallBack(m_seeds_callback);
-	m_frontal_seeds->SetDirection(Profile);
+	m_frontal_seeds->SetDirection(Frontal);
 }
 
 void image_viewer::SetProfileImage(vtkImageData* im)
@@ -96,7 +95,7 @@ void image_viewer::SetProfileImage(vtkImageData* im)
 	m_profile_seeds = vtkSmartPointer<seedwidgets_man>::New();
 	m_profile_seeds->SetInteractor(m_profile_win->GetInteractor());
 	m_profile_seeds->SetCallBack(m_seeds_callback);
-	m_profile_seeds->SetDirection(Frontal);
+	m_profile_seeds->SetDirection(Profile);
 }
 
 void image_viewer::Render()
@@ -119,7 +118,7 @@ void image_viewer::DisableSeedWidgets()
 
 void image_viewer::SetFrontalSeedPos(unsigned int seedID, double pos[3])
 {
-	m_frontal_seeds->SetSeedDisplayPosition(seedID, pos);
+	m_frontal_seeds->SetSeedWorldPosition(seedID, pos);
 }
 
 void image_viewer::AddFrontalSeed(double pos[3])

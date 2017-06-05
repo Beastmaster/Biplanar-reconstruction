@@ -10,6 +10,8 @@ reference: http://www.vtk.org/Wiki/VTK/Examples/Widgets/SeedWidgetImage
 #ifndef _SEEDWIDGETS_CALLBACKS_H_
 #define _SEEDWIDGETS_CALLBACKS_H_
 
+#include <functional>
+
 #include "vtkObject.h"
 #include <vtkCommand.h>
 #include <vtkImageActor.h>
@@ -19,11 +21,14 @@ reference: http://www.vtk.org/Wiki/VTK/Examples/Widgets/SeedWidgetImage
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty2D.h>
 #include <vtkRenderer.h>
+#include <vtkRendererCollection.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkWidgetEvent.h>
 #include <vtkSeedWidget.h>
 #include <vtkSeedRepresentation.h>
 #include <vtkSmartPointer.h>
+#include <vtkTransformCoordinateSystems.h>
 
 #include "module_config.h"
 
@@ -66,7 +71,7 @@ public:
 	void Enable();
 	void Disable();
 
-	void SetSeedDisplayPosition(unsigned int seedID, double pos[3]);
+	void SetSeedWorldPosition(unsigned int seedID, double pos[3]);
 	void SetDirection(View_Direction);        // set after
 	void SetCallBack(vtkSeedImageCallback*);  // set first
 	void AddSeed(double pos[3]);

@@ -10,6 +10,7 @@ Date: 2017/6/3
 #ifndef _IMAGE_VIEWER_H__
 #define _IMAGE_VIEWER_H__
 
+#include <vector>
 
 #include "vtkObject.h"
 #include "vtkImageMapper.h" // For all the inline methods
