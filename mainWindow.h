@@ -28,6 +28,7 @@ Date: 2017/6/3
 #include <QList>
 
 #include "image_viewer.h"
+#include "model3d_viewer.h"
 
 namespace Ui {
 	class MainWindow;
@@ -52,7 +53,7 @@ public slots:
 
 	void on_addseed() {
 		double pos[2] = { 100,100};
-		m_viewer->AddFrontalSeed(pos );
+		m_img_viewer->AddFrontalSeed(pos );
 		std::cout << "movexx" << std::endl;
 	};
 	
@@ -67,7 +68,8 @@ protected:
 
 private:
 	Ui::MainWindow *ui;
-	vtkSmartPointer<image_viewer> m_viewer;
+	vtkSmartPointer<image_viewer> m_img_viewer;
+	vtkSmartPointer<model3d_viewer> m_model_viewer;
 };
 
 

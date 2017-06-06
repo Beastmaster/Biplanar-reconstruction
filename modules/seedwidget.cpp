@@ -20,7 +20,7 @@ void vtkSeedImageCallback::SetFrontalRepresentation(vtkSmartPointer<vtkSeedRepre
 {
 	this->m_FrontalSeedRepresentation = rep;
 }
-void vtkSeedImageCallback::SetFrontalWidget(vtkSmartPointer<vtkSeedWidget> widget)
+void vtkSeedImageCallback::SetFrontalWidget(vtkSmartPointer<vtkSeedWidgetx> widget)
 {
 	this->m_FrontalSeedWidget = widget;
 }
@@ -30,18 +30,45 @@ void vtkSeedImageCallback::SetProfileRepresentation(vtkSmartPointer<vtkSeedRepre
 	this->m_ProfileSeedRepresentation = rep;
 }
 
-void vtkSeedImageCallback::SetProfileWidget(vtkSmartPointer<vtkSeedWidget> widget)
+void vtkSeedImageCallback::SetProfileWidget(vtkSmartPointer<vtkSeedWidgetx> widget)
 {
 	this->m_ProfileSeedWidget = widget;
 }
 
 
-
 void vtkSeedImageCallback::Execute(vtkObject*, unsigned long event, void *calldata)
 {
-	if (event == vtkCommand::PlacePointEvent)
+	//vtkCommand::DeleteEvent
+	if (event==vtkCommand::DeleteEvent)
 	{
 #ifdef DEBUG_MODE
+		std::cout << "Deleting point..." << std::endl;
+#endif // DEBUG_MODE
+		if (m_coordinate.size() > 0)
+			m_coordinate.pop_back();
+		else
+			return;
+
+		int num_front_seeds = this->m_FrontalSeedRepresentation->GetNumberOfSeeds();
+		int num_profi_seeds = this->m_ProfileSeedRepresentation->GetNumberOfSeeds();
+		if (num_front_seeds>num_profi_seeds) // delete last front seed
+		{
+			m_FrontalSeedWidget->DeleteSeed(num_front_seeds - 1);
+			m_FrontalSeedWidget->Render();
+		}
+		else if (num_front_seeds<num_profi_seeds) // delete last profile seed
+		{
+			m_ProfileSeedWidget->DeleteSeed(num_profi_seeds - 1);
+			m_ProfileSeedWidget->Render();
+		}
+		
+#ifdef DEBUG_MODE
+		std::cout << "front:"<<num_front_seeds<<"\t  profile:"<<num_profi_seeds << std::endl;
+#endif // DEBUG_MODE
+	}
+	if (event == vtkCommand::PlacePointEvent) 
+	{
+#ifndef DEBUG_MODE
 		std::cout << "Placing point..." << std::endl;
 #endif // DEBUG_MODE
 
@@ -54,6 +81,7 @@ void vtkSeedImageCallback::Execute(vtkObject*, unsigned long event, void *callda
 			int id = num_front_seeds - 1;
 			m_FrontalSeedRepresentation->GetSeedWorldPosition(id,pos);
 			std::vector<double> tmp_pos(pos, pos + sizeof(pos) / sizeof(double));
+			tmp_pos[2] = 100;
 			m_coordinate.push_back(tmp_pos);
 
 			// add seeds manually
@@ -73,6 +101,7 @@ void vtkSeedImageCallback::Execute(vtkObject*, unsigned long event, void *callda
 			std::vector<double> tmp_pos(3, 0.0);
 			tmp_pos[1] = pos[1];
 			tmp_pos[2] = pos[0];
+			tmp_pos[0] = 100.0;
 			m_coordinate.push_back(tmp_pos);
 
 			// add seeds manually
@@ -83,10 +112,13 @@ void vtkSeedImageCallback::Execute(vtkObject*, unsigned long event, void *callda
 			tmp_seed->SetEnabled(1);
 			m_FrontalSeedWidget->GetInteractor()->GetRenderWindow()->Render();
 		}
-		return;
-	}
+	}  // end if: Place point
 	if (event == vtkCommand::InteractionEvent)
 	{
+#ifndef DEBUG_MODE
+		std::cout << "Moving point..." << std::endl;
+#endif // DEBUG_MODE
+
 		if (calldata)
 		{
 			for (size_t i = 0; i < m_coordinate.size(); i++)
@@ -138,10 +170,8 @@ void vtkSeedImageCallback::Execute(vtkObject*, unsigned long event, void *callda
 				m_ProfileSeedRepresentation->GetHandleRepresentation(i)->SetWorldPosition(pos_profile);
 				m_FrontalSeedWidget->Render();
 				m_ProfileSeedWidget->Render();
-
 			} // end for
 		}  // end if calldata
-		return;
 	} // end if (event == vtkCommand::InteractionEvent)
 }
 
@@ -192,6 +222,7 @@ void seedwidgets_man::SetDirection(View_Direction dir)
 	}
 	m_seedWidget->AddObserver(vtkCommand::PlacePointEvent, seedCallback);
 	m_seedWidget->AddObserver(vtkCommand::InteractionEvent, seedCallback);
+	m_seedWidget->AddObserver(vtkCommand::DeleteEvent, seedCallback);
 }
 
 void seedwidgets_man::SetCallBack(vtkSeedImageCallback * callback)
@@ -220,7 +251,7 @@ seedwidgets_man::seedwidgets_man()
 	m_seedRepresentation->SetHandleRepresentation(m_handle);
 
 	// Seed widget
-	m_seedWidget = vtkSmartPointer<vtkSeedWidget>::New();
+	m_seedWidget = vtkSmartPointer<vtkSeedWidgetx>::New();
 	m_seedWidget->SetRepresentation(m_seedRepresentation);
 }
 

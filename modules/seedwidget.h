@@ -13,6 +13,7 @@ reference: http://www.vtk.org/Wiki/VTK/Examples/Widgets/SeedWidgetImage
 #include <functional>
 
 #include "vtkObject.h"
+#include "vtkObjectFactory.h"
 #include <vtkCommand.h>
 #include <vtkImageActor.h>
 #include <vtkPointHandleRepresentation2D.h>
@@ -25,14 +26,15 @@ reference: http://www.vtk.org/Wiki/VTK/Examples/Widgets/SeedWidgetImage
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkWidgetEvent.h>
-#include <vtkSeedWidget.h>
 #include <vtkSeedRepresentation.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransformCoordinateSystems.h>
 
+#include "vtkSeedWidgetx.h"
 #include "module_config.h"
 
-class vtkSeedImageCallback : public vtkCommand
+
+class vtkSeedImageCallback : public vtkCommand //,public vtkObject
 {
 public:
 	static vtkSeedImageCallback *New()
@@ -41,15 +43,15 @@ public:
 
 	virtual void Execute(vtkObject*, unsigned long event, void *calldata);
 	void SetFrontalRepresentation(vtkSmartPointer<vtkSeedRepresentation> rep);
-	void SetFrontalWidget(vtkSmartPointer<vtkSeedWidget> widget);
+	void SetFrontalWidget(vtkSmartPointer<vtkSeedWidgetx> widget);
 	void SetProfileRepresentation(vtkSmartPointer<vtkSeedRepresentation> rep);
-	void SetProfileWidget(vtkSmartPointer<vtkSeedWidget> widget);
+	void SetProfileWidget(vtkSmartPointer<vtkSeedWidgetx> widget);
 
 private:
 	vtkSeedRepresentation* m_FrontalSeedRepresentation;
-	vtkSeedWidget* m_FrontalSeedWidget;
+	vtkSeedWidgetx* m_FrontalSeedWidget;
 	vtkSeedRepresentation* m_ProfileSeedRepresentation;
-	vtkSeedWidget* m_ProfileSeedWidget;
+	vtkSeedWidgetx* m_ProfileSeedWidget;
 	
 	std::vector<std::vector<double> > m_coordinate;
 };
@@ -82,7 +84,7 @@ protected:
 	~seedwidgets_man();
 
 private:
-	vtkSmartPointer<vtkSeedWidget> m_seedWidget;
+	vtkSmartPointer<vtkSeedWidgetx> m_seedWidget;
 	vtkSmartPointer<vtkRenderWindowInteractor> m_interactor;
 	vtkSmartPointer<vtkSeedRepresentation>  m_seedRepresentation;
 	vtkSmartPointer<vtkPointHandleRepresentation3D> m_handle;

@@ -28,12 +28,13 @@ QMainWindow(parent), ui(new Ui::MainWindow)
 	connect(ui->pick_radio, SIGNAL(clicked()), this, SLOT(on_EnablePick()));
 	connect(ui->pick_radio, SIGNAL(clicked()), this, SLOT(on_DisablePick()));
 
-	m_viewer = vtkSmartPointer<image_viewer>::New();
-	m_viewer->SetFrontalWindow(ui->frontal_view->GetRenderWindow());
-	m_viewer->SetProfileWindow(ui->profile_view->GetRenderWindow());
-	m_viewer->Set3dWindow(ui->td_view->GetRenderWindow());
+	m_img_viewer = vtkSmartPointer<image_viewer>::New();
+	m_img_viewer->SetFrontalWindow(ui->frontal_view->GetRenderWindow());
+	m_img_viewer->SetProfileWindow(ui->profile_view->GetRenderWindow());
+	//m_img_viewer->Set3dWindow(ui->td_view->GetRenderWindow());
 
-
+	m_model_viewer = vtkSmartPointer<model3d_viewer>::New();
+	m_model_viewer->SetRenderWindow(ui->td_view->GetRenderWindow());
 
 	// default init for debug
 #ifdef DEBUG_MODE
@@ -52,7 +53,7 @@ MainWindow:: ~MainWindow()
 void MainWindow::on_EnablePick()
 {
 	if (ui->pick_radio->isChecked())
-	m_viewer->EnableSeedWidgets();
+	m_img_viewer->EnableSeedWidgets();
 }
 
 void MainWindow::on_DisablePick()
@@ -60,7 +61,7 @@ void MainWindow::on_DisablePick()
 	if (ui->pick_radio->isChecked())
 		;
 	else
-		m_viewer->DisableSeedWidgets();
+		m_img_viewer->DisableSeedWidgets();
 }
 
 void MainWindow::dropEvent(QDropEvent* event)
@@ -106,8 +107,8 @@ void MainWindow::on_Load_folder(std::string path)
 	}
 	reader->Update();
 	
-	m_viewer->SetProfileImage(reader->GetProfile());
-	m_viewer->SetFrontalImage(reader->GetFrontal());
+	m_img_viewer->SetProfileImage(reader->GetProfile());
+	m_img_viewer->SetFrontalImage(reader->GetFrontal());
 }
 
 void MainWindow::Open_Folder_Warning()

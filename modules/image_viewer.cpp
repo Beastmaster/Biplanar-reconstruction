@@ -98,6 +98,8 @@ void image_viewer::SetProfileImage(vtkImageData* im)
 	m_profile_seeds->SetDirection(Profile);
 }
 
+
+
 void image_viewer::Render()
 {
 	m_frontal_win->Render();

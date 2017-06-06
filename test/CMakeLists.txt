@@ -23,6 +23,7 @@ test.cpp
 test_reader.cpp
 test_window_zoom.cpp
 test_seedwidgets.cpp
+test_3d_curve.cpp
 )
 
 set(

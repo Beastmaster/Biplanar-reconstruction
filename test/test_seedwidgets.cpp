@@ -13,7 +13,7 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkSeedWidget.h>
+#include "vtkSeedWidgetx.h"
 #include <vtkSeedRepresentation.h>
 #include <vtkSmartPointer.h>
 #include <vtkSphereSource.h>
@@ -59,14 +59,14 @@ public:
 	{
 		this->SeedRepresentation = rep;
 	}
-	void SetWidget(vtkSmartPointer<vtkSeedWidget> widget)
+	void SetWidget(vtkSmartPointer<vtkSeedWidgetx> widget)
 	{
 		this->SeedWidget = widget;
 	}
 
 private:
 	vtkSeedRepresentation* SeedRepresentation;
-	vtkSeedWidget* SeedWidget;
+	vtkSeedWidgetx* SeedWidget;
 };
 
 int test_seedwidgets()
@@ -116,8 +116,8 @@ int test_seedwidgets()
 	rep->SetHandleRepresentation(handle);
 
 	// Seed widget
-	vtkSmartPointer<vtkSeedWidget> seedWidget =
-		vtkSmartPointer<vtkSeedWidget>::New();
+	vtkSmartPointer<vtkSeedWidgetx> seedWidget =
+		vtkSmartPointer<vtkSeedWidgetx>::New();
 	seedWidget->SetInteractor(renderWindowInteractor);
 	seedWidget->SetRepresentation(rep);
 

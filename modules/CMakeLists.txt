@@ -15,8 +15,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 set(
 SRC
 interactor_style.cpp
+model3d_viewer.cpp
 image_viewer.cpp
 seedwidget.cpp
+vtkSeedWidgetx.cpp
 )
 
 set(
@@ -24,9 +26,10 @@ HEAD
 module_config.h
 dicom_retrieve.h
 interactor_style.h
-custom_callbacks.h
+model3d_viewer.h
 image_viewer.h
 seedwidget.h
+vtkSeedWidgetx.h
 )
 
 add_library(${PRJ} ${SRC} ${HEAD})

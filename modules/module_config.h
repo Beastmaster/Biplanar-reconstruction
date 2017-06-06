@@ -15,13 +15,9 @@ Description:
 
 #define DEBUG_MODE
 
-
+#define Seed_Update_Event 9999
 
 #define STD_COUT(X) std::cout<<X<<std::endl;
-
-
-
-
 
 
 
