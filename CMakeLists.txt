@@ -19,7 +19,6 @@ include_directories(modules)
 add_subdirectory(test)
 add_subdirectory(modules)
 
-
 set( UI_FILES
 mainWindow.ui
 )

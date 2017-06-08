@@ -12,9 +12,13 @@ A tool to reconstruct spine from biplanar X-ray or EOS image. Landmarks are sele
 1. Qt, version >= 5.1
 2. VTK, v>= 6.3
 3. Cmake, v>2.8
-
+4. tinyXML2
 ### 2. Image direction
 ![Coordinate system](resources/CoordinateSystem.JPG)
+**Note:**
+The directions on 3d view is different from above. 
+**Y->Z, Z->Y**
+
 
 ### 3. File structure
 

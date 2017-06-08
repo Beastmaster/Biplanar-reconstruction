@@ -7,8 +7,6 @@ Description:
 	Duplication of vtkSeedWidget class, add vtkCommand::DeleteEvent signal
 
 =========================================================================*/
-#include "vtkSeedWidgetx.h"
-
 #include "vtkCallbackCommand.h"
 #include "vtkCommand.h"
 #include "vtkCoordinate.h"
@@ -22,8 +20,11 @@ Description:
 #include "vtkSeedRepresentation.h"
 #include "vtkWidgetCallbackMapper.h"
 #include "vtkWidgetEvent.h"
+
 #include <iterator>
 #include <list>
+
+#include "vtkSeedWidgetx.h"
 
 vtkStandardNewMacro(vtkSeedWidgetx);
 

@@ -15,12 +15,15 @@ Description:
 #include "vtkObject.h"
 #include "vtkSmartPointer.h"
 #include "vtkRenderWindow.h"
-#include "vtkRenderer.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkCallbackCommand.h"
 
+#include <vector>
 
+#include "vtkRendererx.h"
 #include "module_config.h"
+#include "seedImageCallback.h"
+
 
 class model3d_viewer: public vtkObject
 {
@@ -28,15 +31,24 @@ public:
 	static model3d_viewer *New();
 	vtkTypeMacro(model3d_viewer, vtkObject);
 
-	void SetRenderWindow(vtkRenderWindow* win);
-
+	void SetRenderWindow(vtkRenderWindow* win); // install vis pipline after set
+	void SetCallback(seedImageCallback*);
+	
+	void AddActor(vtkActor*);
+	vtkActor* GetActor(int id);
+	
+	void Render();
+	void ResetCamera();
+	vtkSmartPointer<vtkRenderWindow> GetRenderWindow();
+	vtkSmartPointer<vtkRendererx> GetRendererx();
 
 private:
 	model3d_viewer();
 	~model3d_viewer();
 
 	vtkSmartPointer<vtkRenderWindow> m_renWin;
-	vtkSmartPointer<vtkRenderer> m_renderer;	
+	vtkSmartPointer<vtkRendererx>     m_renderer;
+	vtkSmartPointer<seedImageCallback> m_seed_callback;
 };
 
 

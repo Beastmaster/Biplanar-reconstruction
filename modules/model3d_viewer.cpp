@@ -9,49 +9,72 @@ Description:
 */
 
 
-
-
-
 #include "vtkObjectFactory.h"
-
-
+#include "vtkOrientationMarkerWidget.h"
+#include "vtkAxesActor.h"
 
 #include "model3d_viewer.h"
 
-void callbackfunction(vtkObject* caller, long unsigned int vtkNotUsed(eventId), void* vtkNotUsed(clientData), void* vtkNotUsed(callData))
-{
-	std::cout << "callback triger" << std::endl;
-
-	vtkRenderWindowInteractor *iren =
-		static_cast<vtkRenderWindowInteractor*>(caller);
-
-	std::cout << "Pressed: " << iren->GetKeySym() << std::endl;
-}
 
 vtkStandardNewMacro(model3d_viewer);
 void model3d_viewer::SetRenderWindow(vtkRenderWindow * win)
 {
 	m_renWin = win;
+	m_renWin->AddRenderer(m_renderer->GetRenderer());
+	m_renderer->SetRenderWindow(m_renWin);
+	m_renderer->ResetCamera();
+	m_renderer->GetRenderer()->SetBackground(1,1,1);
+}
 
-	auto test_callback = vtkSmartPointer<vtkCallbackCommand>::New();
-	test_callback->SetCallback(callbackfunction);
-	auto interactor = win->GetInteractor();
+void model3d_viewer::SetCallback(seedImageCallback * calls)
+{
+	m_seed_callback = calls;
+	this->AddObserver(vtkCommand::PlacePointEvent, m_seed_callback);
+	this->AddObserver(vtkCommand::InteractionEvent, m_seed_callback);
+	this->AddObserver(vtkCommand::DeleteEvent, m_seed_callback);
+}
+
+void model3d_viewer::AddActor(vtkActor* act)
+{
+	m_renderer->AddActor(act);
+	Render();
+}
+
+vtkActor * model3d_viewer::GetActor(int id)
+{
+	return m_renderer->GetActor(id);
+}
+
+void model3d_viewer::Render()
+{
+	m_renWin->Render();
+}
+
+void model3d_viewer::ResetCamera()
+{
+	m_renderer->ResetCamera();
+	Render();
+}
+
+vtkSmartPointer<vtkRenderWindow> model3d_viewer::GetRenderWindow()
+{
+	return m_renWin;
+}
+
+vtkSmartPointer<vtkRendererx> model3d_viewer::GetRendererx()
+{
+	return m_renderer;
 }
 
 model3d_viewer::model3d_viewer()
 {
 	m_renWin = vtkSmartPointer<vtkRenderWindow>::New();
-	m_renderer = vtkSmartPointer<vtkRenderer>::New();
+	m_renderer = vtkSmartPointer<vtkRendererx>::New();
 }
 
 model3d_viewer::~model3d_viewer()
 {
 }
-
-
-
-
-
 
 
 

@@ -16,6 +16,7 @@ Date: 2017/6/3
 #include <vector>
 #include <functional>
 #include <algorithm>
+#include <map>
 
 #include <QMainWindow>
 #include <QApplication>
@@ -27,14 +28,31 @@ Date: 2017/6/3
 #include <QUrl>
 #include <QList>
 
+#include "vtkPolyData.h"
+
 #include "image_viewer.h"
 #include "model3d_viewer.h"
+
+#ifdef DEBUG_MODE
+#include "vtkSphereSource.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkPolyData.h"
+#include "vtkSTLReader.h"
+#endif // DEBUG_MODE
+
+
 
 namespace Ui {
 	class MainWindow;
 }
 
-
+typedef struct {
+	std::string name;
+	double pos[3];
+	double rotation[3];
+	vtkSmartPointer<vtkPolyData> vertebra_poly;
+	vtkSmartPointer<vtkActor> vertebra;
+} Vertebra;
 
 class MainWindow : public QMainWindow
 {
@@ -56,20 +74,48 @@ public slots:
 		m_img_viewer->AddFrontalSeed(pos );
 		std::cout << "movexx" << std::endl;
 	};
-	
+
+	void on_addactor() {
+		double pos[3] = { 10,10,10 };
+		
+		auto ballsource = vtkSmartPointer<vtkSphereSource>::New();
+		ballsource->SetRadius(10);
+		ballsource->Update();
+		auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+		mapper->SetInputData(ballsource->GetOutput());
+		auto actor = vtkSmartPointer<vtkActor>::New();
+		actor->SetMapper(mapper);
+		m_model_viewer->AddActor(actor);
+		m_model_viewer->ResetCamera();
+	}
+
+	void on_move() {
+		double pos[3] = { 10,10,10 };
+		m_model_viewer->GetActor(0)->SetPosition(pos);
+		m_model_viewer->ResetCamera();
+	}
+	void on_visb()
+	{
+		m_model_viewer->ResetCamera();
+	}
+
 signals:
 void open_folder_signal(std::string path);
 void open_folder_fail_signal();
 
 
 protected:
-	void dropEvent(QDropEvent* event);
-	void dragEnterEvent(QDragEnterEvent *e);
+	void dropEvent(QDropEvent* event);         //drag and drop folder to read
+	void dragEnterEvent(QDragEnterEvent *e);   //drag and drop folder to read
+
+	void loadConfig(); // load xml file
 
 private:
 	Ui::MainWindow *ui;
 	vtkSmartPointer<image_viewer> m_img_viewer;
 	vtkSmartPointer<model3d_viewer> m_model_viewer;
+	vtkSmartPointer<seedImageCallback> m_seed_callback;
+	std::map<std::string, Vertebra > m_VertebraHolder;
 };
 
 

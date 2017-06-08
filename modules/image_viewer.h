@@ -2,7 +2,8 @@
 Author: QIN Shuo
 Organization: RC-MIC (CUHK)
 Date: 2017/6/3
-
+Description:
+	Main class for 2d view 
 */
 
 
@@ -23,8 +24,8 @@ Date: 2017/6/3
 
 #include "module_config.h"
 #include "interactor_style.h"
-#include "seedwidget.h"
-
+#include "seedwidget_man.h"
+#include "seedImageCallback.h"
 
 
 
@@ -36,10 +37,11 @@ public:
 
 	void SetFrontalWindow(vtkRenderWindow*);
 	void SetProfileWindow(vtkRenderWindow*);
-	void Set3dWindow(vtkRenderWindow*);
 
 	void SetFrontalImage(vtkImageData*);
 	void SetProfileImage(vtkImageData*);
+
+	void SetCallback(seedImageCallback* );
 
 	void Render();
 
@@ -48,7 +50,8 @@ public:
 	
 	void SetFrontalSeedPos(unsigned int seedID, double pos[3]);
 	void AddFrontalSeed(double pos[3]);
-
+	void SetProfileSeedPos(unsigned int seedID, double pos[3]);
+	void AddProfileSeed(double pos[3]);
 private:
 	image_viewer();
 	~image_viewer();
@@ -64,17 +67,14 @@ private:
 
 	vtkSmartPointer<vtkRenderWindow> m_frontal_win;
 	vtkSmartPointer<vtkRenderWindow> m_profile_win;
-	vtkSmartPointer<vtkRenderWindow> m_3d_win;
-
 
 	vtkSmartPointer<vtkRenderer> m_frontal_renderer;
 	vtkSmartPointer<vtkRenderer> m_profile_renderer;
-	vtkSmartPointer<vtkRenderer> m_3d_renderer;
 
 	vtkSmartPointer<seedwidgets_man> m_frontal_seeds;
 	vtkSmartPointer<seedwidgets_man> m_profile_seeds;
 
-	vtkSmartPointer<vtkSeedImageCallback> m_seeds_callback;
+	vtkSmartPointer<seedImageCallback> m_seeds_callback;
 
 };
 

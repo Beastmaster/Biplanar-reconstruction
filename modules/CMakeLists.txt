@@ -17,8 +17,10 @@ SRC
 interactor_style.cpp
 model3d_viewer.cpp
 image_viewer.cpp
-seedwidget.cpp
+seedwidget_man.cpp
 vtkSeedWidgetx.cpp
+seedImageCallback.cpp
+vtkRendererx.cpp
 )
 
 set(
@@ -28,8 +30,10 @@ dicom_retrieve.h
 interactor_style.h
 model3d_viewer.h
 image_viewer.h
-seedwidget.h
+seedwidget_man.h
 vtkSeedWidgetx.h
+seedImageCallback.h
+vtkRendererx.h
 )
 
 add_library(${PRJ} ${SRC} ${HEAD})

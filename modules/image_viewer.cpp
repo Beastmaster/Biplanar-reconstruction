@@ -17,19 +17,15 @@ image_viewer::image_viewer()
 {
 	m_frontal_win = vtkSmartPointer<vtkRenderWindow>::New();
 	m_profile_win = vtkSmartPointer<vtkRenderWindow>::New();
-	m_3d_win = vtkSmartPointer<vtkRenderWindow>::New();
 
 	m_frontal_renderer = vtkSmartPointer<vtkRenderer>::New();
 	m_profile_renderer = vtkSmartPointer<vtkRenderer>::New();
-	m_3d_renderer = vtkSmartPointer<vtkRenderer>::New();
 
 	m_frontal_windowlevel = vtkSmartPointer<vtkImageMapToWindowLevelColors>::New();
 	m_profile_windowlevel = vtkSmartPointer<vtkImageMapToWindowLevelColors>::New();
 
 	m_frontal_actor = vtkSmartPointer<vtkImageActor>::New();
 	m_profile_actor = vtkSmartPointer<vtkImageActor>::New();
-
-	m_seeds_callback = vtkSmartPointer<vtkSeedImageCallback>::New();
 }
 
 image_viewer::~image_viewer()
@@ -46,11 +42,6 @@ void image_viewer::SetFrontalWindow(vtkRenderWindow * im)
 void image_viewer::SetProfileWindow(vtkRenderWindow * im)
 {
 	m_profile_win = im;
-}
-
-void image_viewer::Set3dWindow(vtkRenderWindow * im)
-{
-	m_3d_win = im;
 }
 
 void image_viewer::SetFrontalImage(vtkImageData* im)
@@ -98,6 +89,11 @@ void image_viewer::SetProfileImage(vtkImageData* im)
 	m_profile_seeds->SetDirection(Profile);
 }
 
+void image_viewer::SetCallback(seedImageCallback * calls)
+{
+	m_seeds_callback = calls;
+}
+
 
 
 void image_viewer::Render()
@@ -127,6 +123,18 @@ void image_viewer::AddFrontalSeed(double pos[3])
 {
 	m_frontal_seeds->AddSeed(pos);
 	m_frontal_win->Render();
+}
+
+void image_viewer::SetProfileSeedPos(unsigned int seedID, double pos[3])
+{
+	m_profile_seeds->AddSeed(pos);
+	m_profile_win->Render();
+}
+
+void image_viewer::AddProfileSeed(double pos[3])
+{
+	m_profile_seeds->AddSeed(pos);
+	m_profile_win->Render();
 }
 
 

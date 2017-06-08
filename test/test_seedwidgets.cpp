@@ -18,15 +18,15 @@
 #include <vtkSmartPointer.h>
 #include <vtkSphereSource.h>
 
-class vtkSeedImageCallback : public vtkCommand
+class seedImageCallback : public vtkCommand
 {
 public:
-	static vtkSeedImageCallback *New()
+	static seedImageCallback *New()
 	{
-		return new vtkSeedImageCallback;
+		return new seedImageCallback;
 	}
 
-	vtkSeedImageCallback() {}
+	seedImageCallback() {}
 
 	virtual void Execute(vtkObject*, unsigned long event, void *calldata)
 	{
@@ -121,8 +121,8 @@ int test_seedwidgets()
 	seedWidget->SetInteractor(renderWindowInteractor);
 	seedWidget->SetRepresentation(rep);
 
-	vtkSmartPointer<vtkSeedImageCallback> seedCallback =
-		vtkSmartPointer<vtkSeedImageCallback>::New();
+	vtkSmartPointer<seedImageCallback> seedCallback =
+		vtkSmartPointer<seedImageCallback>::New();
 	seedCallback->SetRepresentation(rep);
 	seedCallback->SetWidget(seedWidget);
 	seedWidget->AddObserver(vtkCommand::PlacePointEvent, seedCallback);

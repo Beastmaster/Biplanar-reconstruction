@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root>
+   <childA><subchild1>subtext1</subchild1>
+      <subchild2>subtext2</subchild2>
+   </childA>
+   <childA>
+      <subchild1>subtext3</subchild1>
+      <subchild2>subtext4</subchild2>
+   </childA>
+   <childB>text5</childB>
+   <childB>text6</childB>
+</root>
+
+
+
+<biplanar_reconstruction>
+	<organization>CUHK Dept. ORT</organization>
+
+	<spine>
+		<vertebra>
+			<name>T1</name>
+			<path>vertebra/T1.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+		<vertebra>
+			<name>T2</name>
+			<path>vertebra/T2.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+		<vertebra>
+			<name>T3</name>
+			<path>vertebra/T3.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+		<vertebra>
+			<name>T4</name>
+			<path>vertebra/T4.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+		<vertebra>
+			<name>T5</name>
+			<path>vertebra/T5.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+		<vertebra>
+			<name>T6</name>
+			<path>vertebra/T6.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+	
+		<vertebra>
+			<name>T7</name>
+			<path>vertebra/T7.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+		<vertebra>
+			<name>T8</name>
+			<path>vertebra/T8.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+		<vertebra>
+			<name>T9</name>
+			<path>vertebra/T9.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+		<vertebra>
+			<name>T10</name>
+			<path>vertebra/T10.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+		<vertebra>
+			<name>T11</name>
+			<path>vertebra/T11.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+		<vertebra>
+			<name>T12</name>
+			<path>vertebra/T12.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+		<vertebra>
+			<name>L1</name>
+			<path>vertebra/L1.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+		<vertebra>
+			<name>L2</name>
+			<path>vertebra/L2.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+		<vertebra>
+			<name>L3</name>
+			<path>vertebra/L3.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+		<vertebra>
+			<name>L4</name>
+			<path>vertebra/L4.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+		<vertebra>
+			<name>L5</name>
+			<path>vertebra/L5.stl</path>
+			<position>10.0,10.0,10.0</position>
+		</vertebra>
+
+	</spine>
+
+</biplanar_reconstruction>
+
+
