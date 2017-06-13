@@ -19,8 +19,9 @@ model3d_viewer.cpp
 image_viewer.cpp
 seedwidget_man.cpp
 vtkSeedWidgetx.cpp
-seedImageCallback.cpp
+globalEventCallback.cpp
 vtkRendererx.cpp
+vtksplineinterpolate.cpp
 )
 
 set(
@@ -32,8 +33,9 @@ model3d_viewer.h
 image_viewer.h
 seedwidget_man.h
 vtkSeedWidgetx.h
-seedImageCallback.h
+globalEventCallback.h
 vtkRendererx.h
+vtksplineinterpolate.h
 )
 
 add_library(${PRJ} ${SRC} ${HEAD})

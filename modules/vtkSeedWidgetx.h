@@ -63,11 +63,17 @@ Description:
 
 #include "vtkInteractionWidgetsModule.h" // For export macro
 #include "vtkAbstractWidget.h"
+#include "vtkSmartPointer.h"
+
+#include "module_config.h"
+#include "globalEventCallback.h"
 
 class vtkHandleRepresentation;
 class vtkHandleWidget;
 class vtkSeedList;
 class vtkSeedRepresentation;
+
+
 
 //VTKINTERACTIONWIDGETS_EXPORT
 class  vtkSeedWidgetx : public vtkAbstractWidget
@@ -81,6 +87,20 @@ public:
 	// Standard methods for a VTK class.
 	vtkTypeMacro(vtkSeedWidgetx, vtkAbstractWidget);
 	void PrintSelf(ostream& os, vtkIndent indent);
+
+#pragma region CUSTOM_FUNCTION
+
+	void SetSeedWorldPosition(unsigned int seedID, double pos[3]);
+	void SetDirection(View_Direction);        
+	void SetCallBack(globalEventCallback*);  
+	void AddSeed(double pos[3]);
+
+	int GetSeedWorldPosition(unsigned int id, double* pos); // Get seed world coordinate by id
+	View_Direction GetDirection();
+
+	vtkSmartPointer<globalEventCallback> m_seedCallback;
+	View_Direction m_direction;
+#pragma endregion CUSTOM_FUNCTION
 
 	// Description:
 	// The method for activating and deactivating this widget. This method
@@ -194,6 +214,11 @@ protected:
 private:
 	vtkSeedWidgetx(const vtkSeedWidgetx&);  //Not implemented
 	void operator=(const vtkSeedWidgetx&);  //Not implemented
+
+
+
+
+
 };
 
 #endif

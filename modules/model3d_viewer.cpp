@@ -26,7 +26,7 @@ void model3d_viewer::SetRenderWindow(vtkRenderWindow * win)
 	m_renderer->GetRenderer()->SetBackground(1,1,1);
 }
 
-void model3d_viewer::SetCallback(seedImageCallback * calls)
+void model3d_viewer::SetCallback(globalEventCallback * calls)
 {
 	m_seed_callback = calls;
 	this->AddObserver(vtkCommand::PlacePointEvent, m_seed_callback);

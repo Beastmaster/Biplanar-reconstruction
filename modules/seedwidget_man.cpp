@@ -57,7 +57,7 @@ void seedwidgets_man::SetDirection(View_Direction dir)
 	m_seedWidget->AddObserver(vtkCommand::DeleteEvent, seedCallback);
 }
 
-void seedwidgets_man::SetCallBack(seedImageCallback * callback)
+void seedwidgets_man::SetCallBack(globalEventCallback * callback)
 {
 	seedCallback = callback;
 }

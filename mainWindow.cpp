@@ -28,7 +28,7 @@ QMainWindow(parent), ui(new Ui::MainWindow)
 	connect(ui->pick_radio, SIGNAL(clicked()), this, SLOT(on_EnablePick()));
 	connect(ui->pick_radio, SIGNAL(clicked()), this, SLOT(on_DisablePick()));
 
-	m_seed_callback = vtkSmartPointer<seedImageCallback>::New();
+	m_seed_callback = vtkSmartPointer<globalEventCallback>::New();
 
 	m_img_viewer = vtkSmartPointer<image_viewer>::New();
 	m_img_viewer->SetCallback(m_seed_callback);
@@ -139,9 +139,15 @@ void MainWindow::loadConfig()
 		m_VertebraHolder[lumber.name] = lumber;
 	}
 
-	for (auto it = m_VertebraHolder.begin(); it != m_VertebraHolder.end(); it++)
+	for (size_t i = 1; i <= 12; i++)
 	{
-		m_model_viewer->AddActor((*it).second.vertebra);
+		auto vname = std::string("T").append(std::to_string(i));
+		m_model_viewer->AddActor(m_VertebraHolder[vname].vertebra);
+	}
+	for (size_t i = 1; i <= 5; i++)
+	{
+		auto vname = std::string("L").append(std::to_string(i));
+		m_model_viewer->AddActor(m_VertebraHolder[vname].vertebra);
 	}
 }
 

@@ -22,7 +22,7 @@ Description:
 
 #include "vtkRendererx.h"
 #include "module_config.h"
-#include "seedImageCallback.h"
+#include "globalEventCallback.h"
 
 
 class model3d_viewer: public vtkObject
@@ -32,7 +32,7 @@ public:
 	vtkTypeMacro(model3d_viewer, vtkObject);
 
 	void SetRenderWindow(vtkRenderWindow* win); // install vis pipline after set
-	void SetCallback(seedImageCallback*);
+	void SetCallback(globalEventCallback*);
 	
 	void AddActor(vtkActor*);
 	vtkActor* GetActor(int id);
@@ -48,7 +48,7 @@ private:
 
 	vtkSmartPointer<vtkRenderWindow> m_renWin;
 	vtkSmartPointer<vtkRendererx>     m_renderer;
-	vtkSmartPointer<seedImageCallback> m_seed_callback;
+	vtkSmartPointer<globalEventCallback> m_seed_callback;
 };
 
 

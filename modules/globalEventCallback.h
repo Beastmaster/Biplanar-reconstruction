@@ -33,23 +33,25 @@ Description:
 #include "vtkSmartPointer.h"
 #include "vtkTransformCoordinateSystems.h"
 
-#include "vtkSeedWidgetx.h"
+//#include "vtkSeedWidgetx.h"
 #include "vtkRendererx.h"
 
-class seedImageCallback : public vtkCommand //,public vtkObject
+class vtkSeedWidgetx;
+
+class globalEventCallback : public vtkCommand //,public vtkObject
 {
 public:
-	static seedImageCallback *New()
+	static globalEventCallback *New()
 	{
-		return new seedImageCallback;
+		return new globalEventCallback;
 	}
-	seedImageCallback() {};
+	globalEventCallback() {};
 
 	virtual void Execute(vtkObject*, unsigned long event, void *calldata);
 	void SetFrontalRepresentation(vtkSmartPointer<vtkSeedRepresentation> rep);
-	void SetFrontalWidget(vtkSmartPointer<vtkSeedWidgetx> widget);
+	void SetFrontalWidget(vtkSeedWidgetx *);
 	void SetProfileRepresentation(vtkSmartPointer<vtkSeedRepresentation> rep);
-	void SetProfileWidget(vtkSmartPointer<vtkSeedWidgetx> widget);
+	void SetProfileWidget(vtkSeedWidgetx *);
 	void Set3dRenderer(vtkRendererx*);
 
 private:

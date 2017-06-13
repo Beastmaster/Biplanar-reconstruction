@@ -32,14 +32,9 @@ reference: http://www.vtk.org/Wiki/VTK/Examples/Widgets/SeedWidgetImage
 
 #include "vtkSeedWidgetx.h"
 #include "module_config.h"
-#include "seedImageCallback.h"
+#include "globalEventCallback.h"
 
 
-enum View_Direction
-{
-	Frontal,
-	Profile
-};
 
 class seedwidgets_man : public vtkObject
 {
@@ -53,7 +48,7 @@ public:
 
 	void SetSeedWorldPosition(unsigned int seedID, double pos[3]);
 	void SetDirection(View_Direction);        // set after
-	void SetCallBack(seedImageCallback*);  // set first
+	void SetCallBack(globalEventCallback*);  // set first
 	void AddSeed(double pos[3]);
 
 protected:
@@ -66,7 +61,7 @@ private:
 	vtkSmartPointer<vtkSeedRepresentation>  m_seedRepresentation;
 	vtkSmartPointer<vtkPointHandleRepresentation3D> m_handle;
 	View_Direction m_direction = Frontal;
-	vtkSmartPointer<seedImageCallback> seedCallback;
+	vtkSmartPointer<globalEventCallback> seedCallback;
 };
 
 

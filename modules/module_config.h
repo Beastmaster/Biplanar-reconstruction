@@ -9,7 +9,7 @@ Description:
 */
 
 #ifndef _MODULE_CONFIG_H_
-
+#define _MODULE_CONFIG_H_
 
 
 
@@ -19,6 +19,11 @@ Description:
 
 #define STD_COUT(X) std::cout<<X<<std::endl;
 
+enum View_Direction
+{
+	Frontal,
+	Profile
+};
 
 
 

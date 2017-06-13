@@ -25,7 +25,7 @@ Description:
 #include "module_config.h"
 #include "interactor_style.h"
 #include "seedwidget_man.h"
-#include "seedImageCallback.h"
+#include "globalEventCallback.h"
 
 
 
@@ -41,7 +41,7 @@ public:
 	void SetFrontalImage(vtkImageData*);
 	void SetProfileImage(vtkImageData*);
 
-	void SetCallback(seedImageCallback* );
+	void SetCallback(globalEventCallback* );
 
 	void Render();
 
@@ -52,6 +52,7 @@ public:
 	void AddFrontalSeed(double pos[3]);
 	void SetProfileSeedPos(unsigned int seedID, double pos[3]);
 	void AddProfileSeed(double pos[3]);
+
 private:
 	image_viewer();
 	~image_viewer();
@@ -74,7 +75,7 @@ private:
 	vtkSmartPointer<seedwidgets_man> m_frontal_seeds;
 	vtkSmartPointer<seedwidgets_man> m_profile_seeds;
 
-	vtkSmartPointer<seedImageCallback> m_seeds_callback;
+	vtkSmartPointer<globalEventCallback> m_seeds_callback;
 
 };
 

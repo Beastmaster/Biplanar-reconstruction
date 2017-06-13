@@ -89,7 +89,7 @@ void image_viewer::SetProfileImage(vtkImageData* im)
 	m_profile_seeds->SetDirection(Profile);
 }
 
-void image_viewer::SetCallback(seedImageCallback * calls)
+void image_viewer::SetCallback(globalEventCallback * calls)
 {
 	m_seeds_callback = calls;
 }

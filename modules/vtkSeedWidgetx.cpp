@@ -59,6 +59,10 @@ vtkSeedWidgetx::vtkSeedWidgetx()
 		vtkWidgetEvent::Delete,
 		this, vtkSeedWidgetx::DeleteAction);
 	this->Defining = 1;
+
+#pragma region CUSTOM_DEFINE
+	m_direction = Frontal;
+#pragma endregion CUSTOM_DEFINE
 }
 
 //----------------------------------------------------------------------
@@ -408,4 +412,47 @@ void vtkSeedWidgetx::PrintSelf(ostream& os, vtkIndent indent)
 	this->Superclass::PrintSelf(os, indent);
 
 	os << indent << "WidgetState: " << this->WidgetState << endl;
+}
+
+void vtkSeedWidgetx::SetSeedWorldPosition(unsigned int seedID, double pos[3])
+{
+	unsigned int total_seeds = this->GetSeedRepresentation()->GetNumberOfSeeds();
+	if (total_seeds <= seedID)
+		return;
+
+	this->GetSeedRepresentation()->GetHandleRepresentation(seedID)->SetWorldPosition(pos);
+	this->GetInteractor()->GetRenderWindow()->Render();
+}
+
+void vtkSeedWidgetx::SetDirection(View_Direction xx)
+{
+	m_direction = xx;
+}
+
+void vtkSeedWidgetx::SetCallBack(globalEventCallback * callback)
+{
+	m_seedCallback = callback;
+	this->AddObserver(vtkCommand::PlacePointEvent, m_seedCallback);
+	this->AddObserver(vtkCommand::InteractionEvent, m_seedCallback);
+	this->AddObserver(vtkCommand::DeleteEvent, m_seedCallback);
+}
+
+void vtkSeedWidgetx::AddSeed(double pos[3])
+{
+	auto tmp_seed = this->CreateNewHandle();
+	tmp_seed->GetHandleRepresentation()->SetWorldPosition(pos);
+	tmp_seed->SetEnabled(1);
+}
+
+int vtkSeedWidgetx::GetSeedWorldPosition(unsigned int id, double * pos)
+{
+	if ( id >= this->GetSeedRepresentation()->GetNumberOfSeeds())
+		return 1;
+	this->GetSeedWorldPosition(id, pos);
+	return 0;
+}
+
+View_Direction vtkSeedWidgetx::GetDirection()
+{
+	return m_direction;
 }

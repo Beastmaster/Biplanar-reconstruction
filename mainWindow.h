@@ -114,7 +114,7 @@ private:
 	Ui::MainWindow *ui;
 	vtkSmartPointer<image_viewer> m_img_viewer;
 	vtkSmartPointer<model3d_viewer> m_model_viewer;
-	vtkSmartPointer<seedImageCallback> m_seed_callback;
+	vtkSmartPointer<globalEventCallback> m_seed_callback;
 	std::map<std::string, Vertebra > m_VertebraHolder;
 };
 

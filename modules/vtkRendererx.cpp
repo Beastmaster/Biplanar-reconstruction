@@ -19,7 +19,9 @@ void vtkRendererx::SetRenderer(vtkRenderer * ren)
 
 void vtkRendererx::SetActor(int id, vtkActor * actor)
 {
-	m_renderer->GetActors()->ReplaceItem(id, actor);
+	int total = m_renderer->GetActors()->GetNumberOfItems();
+	if (id < total)
+		m_renderer->GetActors()->ReplaceItem(id, actor);
 }
 
 void vtkRendererx::AddActor(vtkActor * act)
