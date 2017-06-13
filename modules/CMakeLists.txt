@@ -17,10 +17,8 @@ SRC
 interactor_style.cpp
 model3d_viewer.cpp
 image_viewer.cpp
-
 vtkSeedWidgetx.cpp
 globalEventCallback.cpp
-vtkRendererx.cpp
 vtksplineinterpolate.cpp
 )
 
@@ -31,10 +29,8 @@ dicom_retrieve.h
 interactor_style.h
 model3d_viewer.h
 image_viewer.h
-
 vtkSeedWidgetx.h
 globalEventCallback.h
-vtkRendererx.h
 vtksplineinterpolate.h
 )
 

@@ -2,7 +2,7 @@
 Author: QIN Shuo
 Date:   2017/6/2
 Description:
-	My interactor style
+	Custom modified interactor style
 */
 
 #ifndef _INTERACTOR_STYLE_H_

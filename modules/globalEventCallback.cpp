@@ -5,6 +5,7 @@ Date: 2017/6/6
 
 Description:
 	Callback fucntion, seed widget management
+	For global interaction
 */
 
 
@@ -29,9 +30,10 @@ void globalEventCallback::SetProfileWidget(vtkSeedWidgetx * widget)
 }
 
 
-void globalEventCallback::Set3dRenderer(vtkRendererx * ren)
+void globalEventCallback::Set3dWindow(vtkRenderWindow* win)
 {
-	m_3d_renderer = ren;
+	m_3d_renWin = win;
+	m_3d_renderer = win->GetRenderers()->GetFirstRenderer();
 }
 
 
@@ -47,13 +49,13 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 			return;
 		if (num_front_seeds>num_profi_seeds) // delete last front seed
 		{
-			//m_FrontalSeedWidget->DeleteSeed(num_front_seeds - 1);
-			//m_FrontalSeedWidget->Render();
+			m_FrontalSeedWidget->DeleteSeed(num_front_seeds - 1);
+			m_FrontalSeedWidget->Render();
 		}
 		else if (num_front_seeds<num_profi_seeds) // delete last profile seed
 		{
-			//m_ProfileSeedWidget->DeleteSeed(num_profi_seeds - 1);
-			//m_ProfileSeedWidget->Render();
+			m_ProfileSeedWidget->DeleteSeed(num_profi_seeds - 1);
+			m_ProfileSeedWidget->Render();
 		}
 	}
 	if (event == vtkCommand::PlacePointEvent)
@@ -75,10 +77,10 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 			// add seeds manually
 			double new_pos[3]; memset(new_pos, 0, 3 * sizeof(double));
 			new_pos[0] = 100;  new_pos[1] = pos[1];
-			//auto tmp_seed = m_ProfileSeedWidget->CreateNewHandle();
-			//tmp_seed->GetHandleRepresentation()->SetWorldPosition(new_pos);
-			//tmp_seed->SetEnabled(1);
-			//m_ProfileSeedWidget->GetInteractor()->GetRenderWindow()->Render();
+			auto tmp_seed = m_ProfileSeedWidget->CreateNewHandle();
+			tmp_seed->GetHandleRepresentation()->SetWorldPosition(new_pos);
+			tmp_seed->SetEnabled(1);
+			m_ProfileSeedWidget->GetInteractor()->GetRenderWindow()->Render();
 		}
 		else if (num_profi_seeds>num_front_seeds)
 		{
@@ -95,10 +97,10 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 			// add seeds manually
 			double new_pos[3]; memset(new_pos, 0, 3 * sizeof(double));
 			new_pos[0] = 100; new_pos[1] = pos[1];
-			//auto tmp_seed = m_FrontalSeedWidget->CreateNewHandle();
-			//tmp_seed->GetHandleRepresentation()->SetWorldPosition(new_pos);
-			//tmp_seed->SetEnabled(1);
-			//m_FrontalSeedWidget->GetInteractor()->GetRenderWindow()->Render();
+			auto tmp_seed = m_FrontalSeedWidget->CreateNewHandle();
+			tmp_seed->GetHandleRepresentation()->SetWorldPosition(new_pos);
+			tmp_seed->SetEnabled(1);
+			m_FrontalSeedWidget->GetInteractor()->GetRenderWindow()->Render();
 		}
 	}  // end if: Place point
 	if (event == vtkCommand::InteractionEvent)
@@ -128,20 +130,20 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 				double pos_frontal[3]; memset(pos_frontal, 0, 3 * sizeof(double));
 				double pos_profile[3]; memset(pos_profile, 0, 3 * sizeof(double));
 
-				//if (m_FrontalSeedWidget->GetWidgetState() == 8)
-				//{
-				//	this->m_FrontalSeedRepresentation->GetSeedWorldPosition(i, pos_frontal);
-				//	m_coordinate[i][0] = pos_frontal[0];  // update x axis				
-				//	m_coordinate[i][1] = pos_frontal[1];  // update y axis
-				//}
-				//else if (m_ProfileSeedWidget->GetWidgetState() == 8)
-				//{
-				//	this->m_ProfileSeedRepresentation->GetSeedWorldPosition(i, pos_profile);
-				//	m_coordinate[i][2] = pos_profile[0];  // update z axis
-				//	m_coordinate[i][1] = pos_profile[1];  // update y axis
-				//}
-				//else
-				//	return;
+				if (m_FrontalSeedWidget->GetWidgetState() == 8)
+				{
+					this->m_FrontalSeedWidget->GetSeedWorldPosition(i, pos_frontal);
+					m_coordinate[i][0] = pos_frontal[0];  // update x axis				
+					m_coordinate[i][1] = pos_frontal[1];  // update y axis
+				}
+				else if (m_ProfileSeedWidget->GetWidgetState() == 8)
+				{
+					this->m_ProfileSeedWidget->GetSeedWorldPosition(i, pos_profile);
+					m_coordinate[i][2] = pos_profile[0];  // update z axis
+					m_coordinate[i][1] = pos_profile[1];  // update y axis
+				}
+				else
+					return;
 
 				// update display position & convert world coordinate to display coordinate
 				pos_frontal[0] = m_coordinate[i][0];
@@ -150,10 +152,10 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 				pos_profile[0] = m_coordinate[i][2];
 				pos_profile[1] = m_coordinate[i][1];
 
-				//m_FrontalSeedRepresentation->GetHandleRepresentation(i)->SetWorldPosition(pos_frontal);
-				//m_ProfileSeedRepresentation->GetHandleRepresentation(i)->SetWorldPosition(pos_profile);
-				//m_FrontalSeedWidget->Render();
-				//m_ProfileSeedWidget->Render();
+				m_FrontalSeedWidget->SetSeedWorldPosition(i, pos_frontal);
+				m_ProfileSeedWidget->SetSeedWorldPosition(i, pos_profile);
+				m_FrontalSeedWidget->Render();
+				m_ProfileSeedWidget->Render();
 			} // end for
 		}  // end if calldata
 	} // end if (event == vtkCommand::InteractionEvent)
@@ -161,14 +163,14 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 	if ((event == vtkCommand::DeleteEvent)||(event == vtkCommand::InteractionEvent)||(event == vtkCommand::PlacePointEvent) )
 	{
 		// update 3d view
-		for (size_t i = 0; (i < m_coordinate.size()) && (i<m_3d_renderer->GetNumberOfActors()); i++)
+		for (size_t i = 0; (i < m_coordinate.size()) && (i<m_3d_renderer->GetActors()->GetNumberOfItems()); i++)
 		{
 			double pos[3];
 			pos[0] = m_coordinate[i][0];
 			pos[1] = m_coordinate[i][2];
 			pos[2] = m_coordinate[i][1];
-			m_3d_renderer->GetActor(i)->SetPosition(pos);
-			m_3d_renderer->Render();
+			reinterpret_cast<vtkActor*>(m_3d_renderer->GetActors()->GetItemAsObject(i))->SetPosition(pos);
+			m_3d_renWin->Render();
 		}
 	}
 

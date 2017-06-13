@@ -4,7 +4,7 @@ Organization: RC-MIC (CUHK)
 Date: 2017/6/6
 
 Description:
-3d visualization of spine model
+	3d visualization of spine model
 
 */
 
@@ -20,10 +20,10 @@ vtkStandardNewMacro(model3d_viewer);
 void model3d_viewer::SetRenderWindow(vtkRenderWindow * win)
 {
 	m_renWin = win;
-	m_renWin->AddRenderer(m_renderer->GetRenderer());
+	m_renWin->AddRenderer(m_renderer);
 	m_renderer->SetRenderWindow(m_renWin);
 	m_renderer->ResetCamera();
-	m_renderer->GetRenderer()->SetBackground(1,1,1);
+	m_renderer->SetBackground(1,1,1);
 }
 
 void model3d_viewer::SetCallback(globalEventCallback * calls)
@@ -42,7 +42,8 @@ void model3d_viewer::AddActor(vtkActor* act)
 
 vtkActor * model3d_viewer::GetActor(int id)
 {
-	return m_renderer->GetActor(id);
+	
+	return reinterpret_cast<vtkActor*> (m_renderer->GetActors()->GetItemAsObject(id));
 }
 
 void model3d_viewer::Render()
@@ -61,7 +62,7 @@ vtkSmartPointer<vtkRenderWindow> model3d_viewer::GetRenderWindow()
 	return m_renWin;
 }
 
-vtkSmartPointer<vtkRendererx> model3d_viewer::GetRendererx()
+vtkSmartPointer<vtkRenderer> model3d_viewer::GetRenderer()
 {
 	return m_renderer;
 }
@@ -69,7 +70,7 @@ vtkSmartPointer<vtkRendererx> model3d_viewer::GetRendererx()
 model3d_viewer::model3d_viewer()
 {
 	m_renWin = vtkSmartPointer<vtkRenderWindow>::New();
-	m_renderer = vtkSmartPointer<vtkRendererx>::New();
+	m_renderer = vtkSmartPointer<vtkRenderer>::New();
 }
 
 model3d_viewer::~model3d_viewer()

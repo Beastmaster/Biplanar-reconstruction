@@ -38,7 +38,7 @@ QMainWindow(parent), ui(new Ui::MainWindow)
 	m_model_viewer = vtkSmartPointer<model3d_viewer>::New();
 	m_model_viewer->SetRenderWindow(ui->td_view->GetRenderWindow());
 	m_model_viewer->SetCallback(m_seed_callback);
-	m_seed_callback->Set3dRenderer(m_model_viewer->GetRendererx());
+	m_seed_callback->Set3dWindow(m_model_viewer->GetRenderWindow());
 
 	// default init for debug
 #ifdef DEBUG_MODE

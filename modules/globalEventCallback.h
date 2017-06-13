@@ -32,9 +32,7 @@ Description:
 #include "vtkSeedRepresentation.h"
 #include "vtkSmartPointer.h"
 #include "vtkTransformCoordinateSystems.h"
-
-//#include "vtkSeedWidgetx.h"
-#include "vtkRendererx.h"
+#include "vtkRenderer.h"
 
 class vtkSeedWidgetx;
 
@@ -50,13 +48,14 @@ public:
 	virtual void Execute(vtkObject*, unsigned long event, void *calldata);
 	void SetFrontalWidget(vtkSeedWidgetx *);
 	void SetProfileWidget(vtkSeedWidgetx *);
-	void Set3dRenderer(vtkRendererx*);
+	void Set3dWindow(vtkRenderWindow*);
 
 private:
 	vtkSeedWidgetx* m_FrontalSeedWidget;
 	vtkSeedWidgetx* m_ProfileSeedWidget;
 
-	vtkRendererx* m_3d_renderer;
+	vtkRenderer*     m_3d_renderer;
+	vtkRenderWindow* m_3d_renWin;
 
 	std::vector<std::vector<double> > m_coordinate;
 };
