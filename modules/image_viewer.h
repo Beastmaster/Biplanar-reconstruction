@@ -24,7 +24,7 @@ Description:
 
 #include "module_config.h"
 #include "interactor_style.h"
-#include "seedwidget_man.h"
+#include "vtkSeedWidgetx.h"
 #include "globalEventCallback.h"
 
 
@@ -72,8 +72,8 @@ private:
 	vtkSmartPointer<vtkRenderer> m_frontal_renderer;
 	vtkSmartPointer<vtkRenderer> m_profile_renderer;
 
-	vtkSmartPointer<seedwidgets_man> m_frontal_seeds;
-	vtkSmartPointer<seedwidgets_man> m_profile_seeds;
+	vtkSmartPointer<vtkSeedWidgetx> m_frontal_seeds;
+	vtkSmartPointer<vtkSeedWidgetx> m_profile_seeds;
 
 	vtkSmartPointer<globalEventCallback> m_seeds_callback;
 

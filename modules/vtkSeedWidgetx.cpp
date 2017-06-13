@@ -62,6 +62,17 @@ vtkSeedWidgetx::vtkSeedWidgetx()
 
 #pragma region CUSTOM_DEFINE
 	m_direction = Frontal;
+
+	// setup seed widgets
+	// Create the representation
+	m_handle = vtkSmartPointer<vtkPointHandleRepresentation3D>::New();
+	m_handle->GetProperty()->SetColor(1, 1, 0);
+	m_handle->SetHandleSize(20);
+
+	m_seedRepresentation = vtkSmartPointer<vtkSeedRepresentation>::New();
+	m_seedRepresentation->SetHandleRepresentation(m_handle);
+
+	this->SetRepresentation(m_seedRepresentation);
 #pragma endregion CUSTOM_DEFINE
 }
 
@@ -448,11 +459,21 @@ int vtkSeedWidgetx::GetSeedWorldPosition(unsigned int id, double * pos)
 {
 	if ( id >= this->GetSeedRepresentation()->GetNumberOfSeeds())
 		return 1;
-	this->GetSeedWorldPosition(id, pos);
+	this->GetSeedRepresentation()->GetSeedWorldPosition(id, pos);
 	return 0;
+}
+
+int vtkSeedWidgetx::GetInteractionState()
+{
+	return m_seedRepresentation->GetInteractionState();
 }
 
 View_Direction vtkSeedWidgetx::GetDirection()
 {
 	return m_direction;
+}
+
+int vtkSeedWidgetx::GetNumberOfSeeds()
+{
+	return this->GetSeedRepresentation()->GetNumberOfSeeds();
 }

@@ -61,10 +61,11 @@ void image_viewer::SetFrontalImage(vtkImageData* im)
 	m_frontal_win->Render();
 
 	// setup seeds widgets
-	m_frontal_seeds = vtkSmartPointer<seedwidgets_man>::New();
+	m_frontal_seeds = vtkSmartPointer<vtkSeedWidgetx>::New();
 	m_frontal_seeds->SetInteractor(m_frontal_win->GetInteractor());
 	m_frontal_seeds->SetCallBack(m_seeds_callback);
 	m_frontal_seeds->SetDirection(Frontal);
+	m_seeds_callback->SetFrontalWidget(m_frontal_seeds);
 }
 
 void image_viewer::SetProfileImage(vtkImageData* im)
@@ -83,10 +84,12 @@ void image_viewer::SetProfileImage(vtkImageData* im)
 	m_profile_win->GetInteractor()->SetInteractorStyle(vtkSmartPointer<interactor_style>::New());
 	m_profile_win->Render();
 	// setup seeds
-	m_profile_seeds = vtkSmartPointer<seedwidgets_man>::New();
+	m_profile_seeds = vtkSmartPointer<vtkSeedWidgetx>::New();
 	m_profile_seeds->SetInteractor(m_profile_win->GetInteractor());
 	m_profile_seeds->SetCallBack(m_seeds_callback);
 	m_profile_seeds->SetDirection(Profile);
+	m_seeds_callback->SetProfileWidget(m_profile_seeds);
+	
 }
 
 void image_viewer::SetCallback(globalEventCallback * calls)

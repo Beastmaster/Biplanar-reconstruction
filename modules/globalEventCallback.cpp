@@ -14,27 +14,20 @@ Description:
 
 
 #include "globalEventCallback.h"
+#include "vtkSeedWidgetx.h"
 
 
 
-void globalEventCallback::SetFrontalRepresentation(vtkSmartPointer<vtkSeedRepresentation> rep)
-{
-	this->m_FrontalSeedRepresentation = rep;
-}
 void globalEventCallback::SetFrontalWidget(vtkSeedWidgetx* widget)
 {
 	this->m_FrontalSeedWidget = widget;
 }
 
-void globalEventCallback::SetProfileRepresentation(vtkSmartPointer<vtkSeedRepresentation> rep)
-{
-	this->m_ProfileSeedRepresentation = rep;
-}
-
-void globalEventCallback::SetProfileWidget(vtkSeedWidgetx* widget)
+void globalEventCallback::SetProfileWidget(vtkSeedWidgetx * widget)
 {
 	this->m_ProfileSeedWidget = widget;
 }
+
 
 void globalEventCallback::Set3dRenderer(vtkRendererx * ren)
 {
@@ -44,17 +37,14 @@ void globalEventCallback::Set3dRenderer(vtkRendererx * ren)
 
 void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldata)
 {
-	m_FrontalSeedRepresentation->GetInteractionState();
-	m_ProfileSeedRepresentation->GetInteractionState();
+	int num_front_seeds = this->m_FrontalSeedWidget->GetNumberOfSeeds();
+	int num_profi_seeds = this->m_ProfileSeedWidget->GetNumberOfSeeds();
 	if (event == vtkCommand::DeleteEvent)
 	{
 		if (m_coordinate.size() > 0)
 			m_coordinate.pop_back();
 		else
 			return;
-
-		int num_front_seeds = this->m_FrontalSeedRepresentation->GetNumberOfSeeds();
-		int num_profi_seeds = this->m_ProfileSeedRepresentation->GetNumberOfSeeds();
 		if (num_front_seeds>num_profi_seeds) // delete last front seed
 		{
 			//m_FrontalSeedWidget->DeleteSeed(num_front_seeds - 1);
@@ -68,9 +58,6 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 	}
 	if (event == vtkCommand::PlacePointEvent)
 	{
-		int num_front_seeds = this->m_FrontalSeedRepresentation->GetNumberOfSeeds();
-		int num_profi_seeds = this->m_ProfileSeedRepresentation->GetNumberOfSeeds();
-
 		if (num_front_seeds>17 || num_profi_seeds>17)
 		{
 			return;
@@ -80,7 +67,7 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 		{
 			double pos[3];
 			int id = num_front_seeds - 1;
-			m_FrontalSeedRepresentation->GetSeedWorldPosition(id, pos);
+			m_FrontalSeedWidget->GetSeedWorldPosition(id, pos);
 			std::vector<double> tmp_pos(pos, pos + sizeof(pos) / sizeof(double));
 			tmp_pos[2] = 100;
 			m_coordinate.push_back(tmp_pos);
@@ -97,7 +84,7 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 		{
 			double pos[3];
 			int id = num_profi_seeds - 1;
-			m_ProfileSeedRepresentation->GetSeedWorldPosition(id, pos);
+			m_ProfileSeedWidget->GetSeedWorldPosition(id, pos);
 
 			std::vector<double> tmp_pos(3, 0.0);
 			tmp_pos[1] = pos[1];

@@ -6,6 +6,8 @@ Reference:
 	vtkSeedWidget.h/cxx
 Description:
 	Duplication of vtkSeedWidget class, add vtkCommand::DeleteEvent signal
+	Add some setup actions.
+	Reference: reference: http://www.vtk.org/Wiki/VTK/Examples/Widgets/SeedWidgetImage
 
 =========================================================================*/
 // .NAME vtkSeedWidgetx - place multiple seed points
@@ -96,10 +98,19 @@ public:
 	void AddSeed(double pos[3]);
 
 	int GetSeedWorldPosition(unsigned int id, double* pos); // Get seed world coordinate by id
+	int GetInteractionState();
 	View_Direction GetDirection();
+	int GetNumberOfSeeds();
+	
+
+	void Enable() { this->SetEnabled(1); };
+	void Disable() { this->SetEnabled(0); };
 
 	vtkSmartPointer<globalEventCallback> m_seedCallback;
 	View_Direction m_direction;
+
+	vtkSmartPointer<vtkPointHandleRepresentation3D> m_handle;
+	vtkSmartPointer<vtkSeedRepresentation> m_seedRepresentation;
 #pragma endregion CUSTOM_FUNCTION
 
 	// Description:

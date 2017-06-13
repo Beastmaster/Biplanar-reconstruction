@@ -17,7 +17,7 @@ SRC
 interactor_style.cpp
 model3d_viewer.cpp
 image_viewer.cpp
-seedwidget_man.cpp
+
 vtkSeedWidgetx.cpp
 globalEventCallback.cpp
 vtkRendererx.cpp
@@ -31,7 +31,7 @@ dicom_retrieve.h
 interactor_style.h
 model3d_viewer.h
 image_viewer.h
-seedwidget_man.h
+
 vtkSeedWidgetx.h
 globalEventCallback.h
 vtkRendererx.h

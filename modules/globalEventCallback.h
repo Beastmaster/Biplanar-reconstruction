@@ -48,16 +48,12 @@ public:
 	globalEventCallback() {};
 
 	virtual void Execute(vtkObject*, unsigned long event, void *calldata);
-	void SetFrontalRepresentation(vtkSmartPointer<vtkSeedRepresentation> rep);
 	void SetFrontalWidget(vtkSeedWidgetx *);
-	void SetProfileRepresentation(vtkSmartPointer<vtkSeedRepresentation> rep);
 	void SetProfileWidget(vtkSeedWidgetx *);
 	void Set3dRenderer(vtkRendererx*);
 
 private:
-	vtkSeedRepresentation* m_FrontalSeedRepresentation;
 	vtkSeedWidgetx* m_FrontalSeedWidget;
-	vtkSeedRepresentation* m_ProfileSeedRepresentation;
 	vtkSeedWidgetx* m_ProfileSeedWidget;
 
 	vtkRendererx* m_3d_renderer;
