@@ -12,6 +12,9 @@ Date: 2016/1/10
 
 #include "vtkSmartPointer.h"
 #include "vtkRenderWindow.h"
+#include "vtkArrowSource.h"
+#include "vtkSphereSource.h"
+#include "vtkCylinderSource.h"
 
 #include "mainWindow.h"
 #include "ui_mainWindow.h"
@@ -26,7 +29,6 @@ QMainWindow(parent), ui(new Ui::MainWindow)
 	connect(this, SIGNAL(open_folder_signal(std::string)), this, SLOT(on_Load_folder(std::string)));
 	connect(this, SIGNAL(open_folder_fail_signal()), this, SLOT(Open_Folder_Warning()));
 	connect(ui->pick_radio, SIGNAL(clicked()), this, SLOT(on_EnablePick()));
-	connect(ui->pick_radio, SIGNAL(clicked()), this, SLOT(on_DisablePick()));
 
 	m_seed_callback = vtkSmartPointer<globalEventCallback>::New();
 
@@ -61,13 +63,7 @@ MainWindow:: ~MainWindow()
 void MainWindow::on_EnablePick()
 {
 	if (ui->pick_radio->isChecked())
-	m_img_viewer->EnableSeedWidgets();
-}
-
-void MainWindow::on_DisablePick()
-{
-	if (ui->pick_radio->isChecked())
-		;
+		m_img_viewer->EnableSeedWidgets();
 	else
 		m_img_viewer->DisableSeedWidgets();
 }
@@ -112,15 +108,31 @@ void MainWindow::loadConfig()
 		actor->GetProperty()->SetColor(float(std::rand()%100)/100, float(std::rand()) / RAND_MAX, float(std::rand()) / RAND_MAX);
 		return actor;
 	};
+	auto create_arrow = []()
+	{
+		auto arrow = vtkSmartPointer<vtkCylinderSource>::New();
+		arrow->SetCenter(0, 0, 0);
+		arrow->SetRadius(10);
+		arrow->SetHeight(30);
+		arrow->Update();
+		auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+		mapper->SetInputData(arrow->GetOutput());
+		auto actor = vtkSmartPointer<vtkActor>::New();
+		actor->SetMapper(mapper);
+		return actor;
+	};
 
 	// read Throcic
 	std::string Th_base = "D:/Project/spine_reconstruct/resources/vertebra/T";
 	for (size_t i = 1; i <= 12; i++)
 	{
+#ifdef DEBUG_MODE
+		auto actor = create_arrow();
+#else
 		auto cp = Th_base;
 		auto name = cp.append(std::to_string(i)).append( ".stl");
 		auto actor = read_stl(name);
-		
+#endif
 		Vertebra throacic;
 		throacic.name = std::string("T").append(std::to_string(i));
 		throacic.vertebra = actor;
@@ -129,9 +141,13 @@ void MainWindow::loadConfig()
 	Th_base = "D:/Project/spine_reconstruct/resources/vertebra/L";
 	for (size_t i = 1; i <= 5; i++)
 	{
+#ifndef DEBUG_MODE
+		auto actor = create_arrow();
+#else
 		auto cp = Th_base;
 		auto name = cp.append(std::to_string(i)).append(".stl");
 		auto actor = read_stl(name);
+#endif // DEBUG_MODE
 
 		Vertebra lumber;
 		lumber.name = std::string("L").append(std::to_string(i));

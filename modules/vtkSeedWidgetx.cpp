@@ -62,6 +62,7 @@ vtkSeedWidgetx::vtkSeedWidgetx()
 
 #pragma region CUSTOM_DEFINE
 	m_direction = Frontal;
+	m_num_limit = 17;
 
 	// setup seed widgets
 	// Create the representation
@@ -189,6 +190,11 @@ void vtkSeedWidgetx::AddPointAction(vtkAbstractWidget *w)
 	{
 		// we are placing a new seed. Just make sure we aren't in a mode which
 		// dictates we've placed all seeds.
+
+#pragma region CUSTOM
+		if (self->GetNumberOfSeeds()>=self->m_num_limit)
+			return;
+#pragma endregion CUSTOM
 
 		self->WidgetState = vtkSeedWidgetx::PlacingSeeds;
 		double e[3]; e[2] = 0.0;
@@ -446,6 +452,11 @@ void vtkSeedWidgetx::SetCallBack(globalEventCallback * callback)
 	this->AddObserver(vtkCommand::PlacePointEvent, m_seedCallback);
 	this->AddObserver(vtkCommand::InteractionEvent, m_seedCallback);
 	this->AddObserver(vtkCommand::DeleteEvent, m_seedCallback);
+}
+
+void vtkSeedWidgetx::SetSeedsNumLimit(int num)
+{
+	m_num_limit = num;
 }
 
 void vtkSeedWidgetx::AddSeed(double pos[3])

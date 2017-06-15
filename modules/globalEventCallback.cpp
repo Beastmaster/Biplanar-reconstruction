@@ -36,6 +36,37 @@ void globalEventCallback::Set3dWindow(vtkRenderWindow* win)
 	m_3d_renderer = win->GetRenderers()->GetFirstRenderer();
 }
 
+void globalEventCallback::UpdateView()
+{
+	// update 3d view
+	auto pts = vtkSmartPointer<vtkPoints>::New();
+	for (size_t i = 0; (i < m_coordinate.size()) && (i<m_3d_renderer->GetActors()->GetNumberOfItems()); i++)
+	{
+		double* pos = new double[3];
+		pos[0] = m_coordinate[i][0];
+		pos[1] = m_coordinate[i][2];
+		pos[2] = m_coordinate[i][1];
+		pts->InsertNextPoint(pos);
+	}
+	auto spline = vtkSmartPointer<vtksplineinterpolate>::New();
+	spline->SetPoints(pts);
+	spline->Update();
+	auto rots = spline->GetTransformationList();
+
+	for (size_t i = 0; (i < m_coordinate.size()) && (i<m_3d_renderer->GetActors()->GetNumberOfItems()); i++)
+	{
+		auto act = reinterpret_cast<vtkActor*>(m_3d_renderer->GetActors()->GetItemAsObject(i));
+		auto trans = vtkSmartPointer<vtkTransform>::New();
+		auto pt = pts->GetPoint(i);
+		for (int ii = 0; ii < 3; ii++)
+			rots[i]->SetElement(ii, 3, pt[ii]);
+		trans->SetMatrix(rots[i]);
+		act->SetUserTransform(trans);
+	}
+	m_3d_renWin->Render();
+}
+
+
 
 void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldata)
 {
@@ -60,11 +91,6 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 	}
 	if (event == vtkCommand::PlacePointEvent)
 	{
-		if (num_front_seeds>17 || num_profi_seeds>17)
-		{
-			return;
-		}
-
 		if (num_front_seeds>num_profi_seeds)
 		{
 			double pos[3];
@@ -160,19 +186,8 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 		}  // end if calldata
 	} // end if (event == vtkCommand::InteractionEvent)
 
-	if ((event == vtkCommand::DeleteEvent)||(event == vtkCommand::InteractionEvent)||(event == vtkCommand::PlacePointEvent) )
-	{
-		// update 3d view
-		for (size_t i = 0; (i < m_coordinate.size()) && (i<m_3d_renderer->GetActors()->GetNumberOfItems()); i++)
-		{
-			double pos[3];
-			pos[0] = m_coordinate[i][0];
-			pos[1] = m_coordinate[i][2];
-			pos[2] = m_coordinate[i][1];
-			reinterpret_cast<vtkActor*>(m_3d_renderer->GetActors()->GetItemAsObject(i))->SetPosition(pos);
-			m_3d_renWin->Render();
-		}
-	}
+	//if ((event == vtkCommand::DeleteEvent) || (event == vtkCommand::InteractionEvent) || (event == vtkCommand::PlacePointEvent))
+		UpdateView();
 
 }
 

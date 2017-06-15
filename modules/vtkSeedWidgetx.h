@@ -7,7 +7,7 @@ Reference:
 Description:
 	Duplication of vtkSeedWidget class, add vtkCommand::DeleteEvent signal
 	Add some setup actions.
-	Reference: reference: http://www.vtk.org/Wiki/VTK/Examples/Widgets/SeedWidgetImage
+	Reference: http://www.vtk.org/Wiki/VTK/Examples/Widgets/SeedWidgetImage
 
 =========================================================================*/
 // .NAME vtkSeedWidgetx - place multiple seed points
@@ -95,6 +95,7 @@ public:
 	void SetSeedWorldPosition(unsigned int seedID, double pos[3]);
 	void SetDirection(View_Direction);        
 	void SetCallBack(globalEventCallback*);  
+	void SetSeedsNumLimit(int);
 	void AddSeed(double pos[3]);
 
 	int GetSeedWorldPosition(unsigned int id, double* pos); // Get seed world coordinate by id
@@ -108,6 +109,9 @@ public:
 
 	vtkSmartPointer<globalEventCallback> m_seedCallback;
 	View_Direction m_direction;
+	// Set the number limit of total seeds
+	// Add number check on AddPointAction()
+	int m_num_limit;
 
 	vtkSmartPointer<vtkPointHandleRepresentation3D> m_handle;
 	vtkSmartPointer<vtkSeedRepresentation> m_seedRepresentation;

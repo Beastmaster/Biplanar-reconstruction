@@ -30,6 +30,18 @@ http://www.vtk.org/Wiki/VTK/Examples/Cxx/VisualizationAlgorithms/TubesFromSpline
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkSphereSource.h>
+#include <vtkArrowSource.h>
+#include <vtkAxesActor.h>
+#include <vtkOrientationMarkerWidget.h>
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
+#include  <vtkMath.h>
+#include <gdcmSmartPointer.h>
+
+#include "vtksplineinterpolate.h"
+
+#include <functional>
 
 int test_3d_curve()
 {
@@ -141,12 +153,198 @@ int test_3d_curve()
 
 
 
+int test_3d_curve_class()
+{
+	vtkSmartPointer<vtkPoints> points =
+		vtkSmartPointer<vtkPoints>::New();
+	points->InsertPoint(0, 10/2, 0, 0);
+	points->InsertPoint(1, 20/2, 0, 0);
+	points->InsertPoint(2, 30/2, 10/2, 0);
+	points->InsertPoint(3, 40/2, 10/2, 0);
+	points->InsertPoint(4, 50/2, 0, 10);
+	points->InsertPoint(5, 60/2, 0, 0);
+
+	auto spline = vtkSmartPointer<vtksplineinterpolate>::New();
+	spline->SetPoints(points);
+	spline->Update();
+	auto rots = spline->GetTransformationList();
+
+	auto ptpoly = spline->GetOutput();
+
+	auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	mapper->SetInputData(ptpoly);
+
+	auto actor = vtkSmartPointer<vtkActor>::New();
+	actor->SetMapper(mapper);
+
+	// Setup render window, renderer, and interactor
+	vtkSmartPointer<vtkRenderer> renderer =
+		vtkSmartPointer<vtkRenderer>::New();
+	vtkSmartPointer<vtkRenderWindow> renderWindow =
+		vtkSmartPointer<vtkRenderWindow>::New();
+	renderWindow->AddRenderer(renderer);
+	vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor =
+		vtkSmartPointer<vtkRenderWindowInteractor>::New();
+	renderWindowInteractor->SetRenderWindow(renderWindow);
+	renderer->AddActor(actor);
+	for (size_t i = 0; i < points->GetNumberOfPoints(); i++)
+	{
+		auto arrow = vtkSmartPointer<vtkArrowSource>::New();
+		arrow->Update();
+		
+		auto trans = vtkSmartPointer<vtkTransform>::New();
+		trans->SetMatrix(rots.at(i));
+		vtkSmartPointer<vtkTransformPolyDataFilter> transformPD =
+			vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+		transformPD->SetTransform(trans);
+		transformPD->SetInputData(arrow->GetOutput());
+		transformPD->Update();
+
+		auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+		mapper->SetInputData(transformPD->GetOutput());
+		//mapper->SetInputData(arrow->GetOutput());
+		actor = vtkSmartPointer<vtkActor>::New();
+		actor->SetMapper(mapper);
+		actor->SetPosition(points->GetPoint(i));
+		renderer->AddActor(actor);
+	}
+
+
+	vtkSmartPointer<vtkAxesActor> axes =
+		vtkSmartPointer<vtkAxesActor>::New();
+
+	vtkSmartPointer<vtkOrientationMarkerWidget> widget =
+		vtkSmartPointer<vtkOrientationMarkerWidget>::New();
+	widget->SetOutlineColor(0.9300, 0.5700, 0.1300);
+	widget->SetOrientationMarker(axes);
+	widget->SetInteractor(renderWindowInteractor);
+	widget->SetViewport(0.0, 0.0, 0.4, 0.4);
+	widget->SetEnabled(1);
+	widget->InteractiveOn();
+
+	renderer->ResetCamera();
+	renderer->SetBackground(.4, .5, .6);
+	renderWindow->Render();
+	renderWindowInteractor->Start();
+
+	return 0;
+}
 
 
 
 
+int test_orientation()
+{
+	auto create_sphere = []()
+	{
+		auto start_sphere = vtkSmartPointer<vtkSphereSource>::New();
+		//start_sphere->SetRadius(1);
+		start_sphere->Update(); 
+		auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+		mapper->SetInputData(start_sphere->GetOutput());
+		auto actor = vtkSmartPointer<vtkActor>::New();
+		actor->SetMapper(mapper);
+		return actor;
+	};
 
 
+
+	double start[3] = { 5,0,0 };
+	double end[3] = { 5.59111,-0.0916362,-0.00732185 };
+
+	//
+	//ptx1:  8.81125,-0.214678,-0.0171531
+	//ptx2:  10.4373, 0.158952, 0.0126282
+	//ptx1 : 14.5423, 4.68594, 0.0677066
+	//ptx2 : 15.6663, 5.27892, -0.1141
+	//ptx1 : 19.1717, 5.24086, -0.274653
+	//ptx2 : 20.4074, 4.8453, 0.240367
+
+
+	// Compute a basis
+	double normalizedX[3];
+	double normalizedY[3];
+	double normalizedZ[3];
+
+	// The X axis is a vector from start to end
+	vtkMath::Subtract(end, start, normalizedX);
+	double length = vtkMath::Norm(normalizedX);
+	vtkMath::Normalize(normalizedX);
+
+	// The Z axis is an arbitrary vector cross X
+	double arbitrary[3];
+	arbitrary[0] = vtkMath::Random(-10, 10);
+	arbitrary[1] = vtkMath::Random(-10, 10);
+	arbitrary[2] = vtkMath::Random(-10, 10);
+	vtkMath::Cross(normalizedX, arbitrary, normalizedZ);
+	vtkMath::Normalize(normalizedZ);
+
+	// The Y axis is Z cross X
+	vtkMath::Cross(normalizedZ, normalizedX, normalizedY);
+	vtkSmartPointer<vtkMatrix4x4> matrix =
+		vtkSmartPointer<vtkMatrix4x4>::New();
+
+	// Create the direction cosine matrix
+	matrix->Identity();
+	for (unsigned int i = 0; i < 3; i++)
+	{
+		matrix->SetElement(i, 0, normalizedX[i]);
+		matrix->SetElement(i, 1, normalizedY[i]);
+		matrix->SetElement(i, 2, normalizedZ[i]);
+	}
+	auto transform = vtkSmartPointer<vtkTransform>::New();
+	transform->SetMatrix(matrix);
+
+	auto sphere1 = create_sphere();
+	sphere1->SetPosition(start);
+	auto sphere2 = create_sphere();
+	sphere2->SetPosition(end);
+
+	auto arrow = vtkSmartPointer<vtkArrowSource>::New();
+	//arrow->SetTipLength(10);
+	arrow->Update();
+	auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	mapper->SetInputData(arrow->GetOutput());
+	auto arr_actor = vtkSmartPointer<vtkActor>::New();
+	arr_actor->SetMapper(mapper);
+	arr_actor->SetUserTransform(transform);
+	//arr_actor->RotateY(y_xz);
+	//arr_actor->RotateZ(z_xy);
+	arr_actor->SetPosition(start);
+
+	// Setup render window, renderer, and interactor
+	vtkSmartPointer<vtkRenderer> renderer =
+		vtkSmartPointer<vtkRenderer>::New();
+	vtkSmartPointer<vtkRenderWindow> renderWindow =
+		vtkSmartPointer<vtkRenderWindow>::New();
+	renderWindow->AddRenderer(renderer);
+	vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor =
+		vtkSmartPointer<vtkRenderWindowInteractor>::New();
+	renderWindowInteractor->SetRenderWindow(renderWindow);
+	renderer->AddActor(sphere1);
+	renderer->AddActor(sphere2);
+	renderer->AddActor(arr_actor);
+
+	// create coordinate widget
+	vtkSmartPointer<vtkAxesActor> axes =
+		vtkSmartPointer<vtkAxesActor>::New();
+	vtkSmartPointer<vtkOrientationMarkerWidget> widget =
+		vtkSmartPointer<vtkOrientationMarkerWidget>::New();
+	widget->SetOutlineColor(0.9300, 0.5700, 0.1300);
+	widget->SetOrientationMarker(axes);
+	widget->SetInteractor(renderWindowInteractor);
+	widget->SetViewport(0.0, 0.0, 0.4, 0.4);
+	widget->SetEnabled(1);
+	widget->InteractiveOn();
+
+	renderer->ResetCamera();
+	renderer->SetBackground(.4, .5, .6);
+	renderWindow->Render();
+	renderWindowInteractor->Start();
+
+	return 0;
+
+}
 
 
 

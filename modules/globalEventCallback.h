@@ -33,6 +33,9 @@ Description:
 #include "vtkSmartPointer.h"
 #include "vtkTransformCoordinateSystems.h"
 #include "vtkRenderer.h"
+#include "vtkTransform.h"
+
+#include "vtksplineinterpolate.h"
 
 class vtkSeedWidgetx;
 
@@ -49,12 +52,13 @@ public:
 	void SetFrontalWidget(vtkSeedWidgetx *);
 	void SetProfileWidget(vtkSeedWidgetx *);
 	void Set3dWindow(vtkRenderWindow*);
+	void UpdateView();
 
 private:
 	vtkSeedWidgetx* m_FrontalSeedWidget;
 	vtkSeedWidgetx* m_ProfileSeedWidget;
 
-	vtkRenderer*     m_3d_renderer;
+	vtkRenderer*     m_3d_renderer; // auto get when setting window
 	vtkRenderWindow* m_3d_renWin;
 
 	std::vector<std::vector<double> > m_coordinate;
