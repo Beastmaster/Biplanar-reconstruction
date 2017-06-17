@@ -12,7 +12,7 @@ import glob
 import os
 import vtk
 
-
+from util import *
 
 def generate_stl(fname,dst_dir):
     """
@@ -52,18 +52,7 @@ def generate_stl(fname,dst_dir):
         smoothFilter.Update()
         return smoothFilter.GetOutput()
 
-    def read_nii(fname):
-        reader = vtk.vtkNIFTIImageReader()
-        reader.SetFileName(fname)
-        reader.Update()
-        return reader.GetOutput()
 
-    def write_stl(poly,fname):
-        writer = vtk.vtkSTLWriter()
-        writer.SetInputData(poly)
-        writer.SetFileName(fname)
-        writer.Update()
-    
     def gen_name(fname,dst_dir=None):
         if dst_dir is None:
             fl = fname.split(".")

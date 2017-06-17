@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 	//test_seedwidgets();
 
 	//test_3d_curve();
-	test_3d_curve_class();
+	//test_3d_curve_class();
 	test_orientation();
 
 	return 0;

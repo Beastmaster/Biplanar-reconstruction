@@ -4,7 +4,7 @@ build/
 
 *.stl
 
-
+*/__pycache__
 tinyxml2/*
 !tinyxml2/tinyxml2.cpp
 !tinyxml2/tinyxml2.h

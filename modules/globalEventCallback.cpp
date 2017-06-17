@@ -81,13 +81,18 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 		if (num_front_seeds>num_profi_seeds) // delete last front seed
 		{
 			m_FrontalSeedWidget->DeleteSeed(num_front_seeds - 1);
-			m_FrontalSeedWidget->Render();
 		}
 		else if (num_front_seeds<num_profi_seeds) // delete last profile seed
 		{
-			m_ProfileSeedWidget->DeleteSeed(num_profi_seeds - 1);
-			m_ProfileSeedWidget->Render();
+			m_ProfileSeedWidget->DeleteSeed(num_profi_seeds - 1);	
 		}
+		else
+		{
+			m_FrontalSeedWidget->DeleteSeed(num_front_seeds - 1);
+			m_ProfileSeedWidget->DeleteSeed(num_profi_seeds - 1);
+		}
+		m_FrontalSeedWidget->Render();
+		m_ProfileSeedWidget->Render();
 	}
 	if (event == vtkCommand::PlacePointEvent)
 	{
@@ -133,7 +138,13 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 	{
 		if (calldata)
 		{
-			for (unsigned int i = 0; i < m_coordinate.size(); i++)
+			int flag_front_seed = m_FrontalSeedWidget->GetWidgetState();
+			int flag_profi_seed = m_ProfileSeedWidget->GetWidgetState();
+			if (flag_front_seed==8 || flag_profi_seed==8)
+			{
+				m_coordinate.clear();
+			}
+			for (unsigned int i = 0; i < (num_front_seeds>num_profi_seeds? num_profi_seeds:num_front_seeds); i++)
 			{
 				auto world2display = [](vtkRenderer* renderer, double* coor, double* nw) {
 					vtkSmartPointer<vtkCoordinate> coordinate =
@@ -143,7 +154,6 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 					double* world = coordinate->GetComputedDoubleDisplayValue(renderer);
 					nw[0] = world[0]; nw[1] = world[1]; nw[2] = world[2];
 				};
-
 				auto display2world = [](vtkRenderer* renderer, double* coor, double* nw) {
 					vtkSmartPointer<vtkCoordinate> coordinate =
 						vtkSmartPointer<vtkCoordinate>::New();
@@ -155,21 +165,26 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 
 				double pos_frontal[3]; memset(pos_frontal, 0, 3 * sizeof(double));
 				double pos_profile[3]; memset(pos_profile, 0, 3 * sizeof(double));
+				this->m_FrontalSeedWidget->GetSeedWorldPosition(i, pos_frontal);
+				this->m_ProfileSeedWidget->GetSeedWorldPosition(i, pos_profile);
 
-				if (m_FrontalSeedWidget->GetWidgetState() == 8)
+				std::vector<double> tmp;
+				if (flag_front_seed == 8)
 				{
-					this->m_FrontalSeedWidget->GetSeedWorldPosition(i, pos_frontal);
-					m_coordinate[i][0] = pos_frontal[0];  // update x axis				
-					m_coordinate[i][1] = pos_frontal[1];  // update y axis
+					tmp.push_back(pos_frontal[0]);  // update x axis				
+					tmp.push_back(pos_frontal[1]);  // update y axis
+					tmp.push_back(pos_profile[0]);
 				}
-				else if (m_ProfileSeedWidget->GetWidgetState() == 8)
+				else if (flag_profi_seed == 8)
 				{
-					this->m_ProfileSeedWidget->GetSeedWorldPosition(i, pos_profile);
-					m_coordinate[i][2] = pos_profile[0];  // update z axis
-					m_coordinate[i][1] = pos_profile[1];  // update y axis
+					tmp.push_back(pos_frontal[0]);
+					tmp.push_back(pos_profile[1]);  // update y axis
+					tmp.push_back(pos_profile[0]);  // update z axis
 				}
 				else
 					return;
+
+				m_coordinate.push_back(tmp);
 
 				// update display position & convert world coordinate to display coordinate
 				pos_frontal[0] = m_coordinate[i][0];

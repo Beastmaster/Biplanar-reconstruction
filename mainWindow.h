@@ -67,6 +67,9 @@ public slots:
 	void on_Load_folder(std::string path);
 	void Open_Folder_Warning();
 	void on_EnablePick();
+	// auto allocate seed widget position
+	void AutoInitPosition();
+
 
 	void on_addseed() {
 		double pos[2] = { 100,100};

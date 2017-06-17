@@ -68,6 +68,22 @@ void MainWindow::on_EnablePick()
 		m_img_viewer->DisableSeedWidgets();
 }
 
+void MainWindow::AutoInitPosition()
+{
+	for (size_t i = 0; i < 17; i++)
+	{
+		double x = 100;
+		double y = i * 40;
+		double z = 100;
+
+		double front_pos[3] = { x,y,0 };
+		double profi_pos[3] = { z,y,0 };
+		m_img_viewer->AddFrontalSeed(front_pos);
+		m_img_viewer->AddProfileSeed(profi_pos);
+	}
+	m_img_viewer->InvokeEvent(vtkCommand::InteractionEvent);
+}
+
 void MainWindow::dropEvent(QDropEvent* event)
 {
 	const QMimeData* mimeData = event->mimeData();
@@ -187,6 +203,7 @@ void MainWindow::on_Load_folder(std::string path)
 	
 	m_img_viewer->SetProfileImage(reader->GetProfile());
 	m_img_viewer->SetFrontalImage(reader->GetFrontal());
+	AutoInitPosition();
 }
 
 void MainWindow::Open_Folder_Warning()

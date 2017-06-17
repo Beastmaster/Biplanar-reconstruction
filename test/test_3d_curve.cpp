@@ -38,6 +38,8 @@ http://www.vtk.org/Wiki/VTK/Examples/Cxx/VisualizationAlgorithms/TubesFromSpline
 #include <vtkTransformPolyDataFilter.h>
 #include  <vtkMath.h>
 #include <gdcmSmartPointer.h>
+#include <vtkInteractorStyleSwitch.h>
+#include <vtkCylinderSource.h>
 
 #include "vtksplineinterpolate.h"
 
@@ -238,7 +240,7 @@ int test_orientation()
 	auto create_sphere = []()
 	{
 		auto start_sphere = vtkSmartPointer<vtkSphereSource>::New();
-		//start_sphere->SetRadius(1);
+		start_sphere->SetRadius(0.1);
 		start_sphere->Update(); 
 		auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 		mapper->SetInputData(start_sphere->GetOutput());
@@ -249,68 +251,45 @@ int test_orientation()
 
 
 
-	double start[3] = { 5,0,0 };
-	double end[3] = { 5.59111,-0.0916362,-0.00732185 };
+	double start[3] = { 0,0,0 };
+	double end[3] = { 1,1,1 };
 
-	//
-	//ptx1:  8.81125,-0.214678,-0.0171531
-	//ptx2:  10.4373, 0.158952, 0.0126282
-	//ptx1 : 14.5423, 4.68594, 0.0677066
-	//ptx2 : 15.6663, 5.27892, -0.1141
-	//ptx1 : 19.1717, 5.24086, -0.274653
-	//ptx2 : 20.4074, 4.8453, 0.240367
+	double vector[3];
+	vector[0] = end[0] - start[0];
+	vector[1] = end[1] - start[1];
+	vector[2] = end[2] - start[2];
 
-
-	// Compute a basis
-	double normalizedX[3];
-	double normalizedY[3];
-	double normalizedZ[3];
-
-	// The X axis is a vector from start to end
-	vtkMath::Subtract(end, start, normalizedX);
-	double length = vtkMath::Norm(normalizedX);
-	vtkMath::Normalize(normalizedX);
-
-	// The Z axis is an arbitrary vector cross X
-	double arbitrary[3];
-	arbitrary[0] = vtkMath::Random(-10, 10);
-	arbitrary[1] = vtkMath::Random(-10, 10);
-	arbitrary[2] = vtkMath::Random(-10, 10);
-	vtkMath::Cross(normalizedX, arbitrary, normalizedZ);
-	vtkMath::Normalize(normalizedZ);
-
-	// The Y axis is Z cross X
-	vtkMath::Cross(normalizedZ, normalizedX, normalizedY);
-	vtkSmartPointer<vtkMatrix4x4> matrix =
-		vtkSmartPointer<vtkMatrix4x4>::New();
-
-	// Create the direction cosine matrix
-	matrix->Identity();
-	for (unsigned int i = 0; i < 3; i++)
-	{
-		matrix->SetElement(i, 0, normalizedX[i]);
-		matrix->SetElement(i, 1, normalizedY[i]);
-		matrix->SetElement(i, 2, normalizedZ[i]);
-	}
-	auto transform = vtkSmartPointer<vtkTransform>::New();
-	transform->SetMatrix(matrix);
+	double norm = sqrt(vector[0] * vector[0] + vector[1] * vector[1] + vector[2] * vector[2]);
+	vector[0] = vector[0] / norm;
+	vector[1] = vector[1] / norm;
+	vector[2] = vector[2] / norm;
 
 	auto sphere1 = create_sphere();
 	sphere1->SetPosition(start);
 	auto sphere2 = create_sphere();
 	sphere2->SetPosition(end);
 
-	auto arrow = vtkSmartPointer<vtkArrowSource>::New();
-	//arrow->SetTipLength(10);
+	double PI = 3.1415926;
+	double angleZ = acos(vector[0]) * 180 / PI;
+	double angleX = asin(vector[2] / sqrt(vector[1] * vector[1] + vector[2] * vector[2])) * 180 / PI;
+
+	//auto arrow = vtkSmartPointer<vtkArrowSource>::New();
+	auto arrow = vtkSmartPointer<vtkCylinderSource>::New();
+	arrow->SetRadius(0.1);
 	arrow->Update();
 	auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	mapper->SetInputData(arrow->GetOutput());
 	auto arr_actor = vtkSmartPointer<vtkActor>::New();
 	arr_actor->SetMapper(mapper);
-	arr_actor->SetUserTransform(transform);
-	//arr_actor->RotateY(y_xz);
-	//arr_actor->RotateZ(z_xy);
+	arr_actor->RotateZ(angleZ);
+	//arr_actor->RotateX(60);
 	arr_actor->SetPosition(start);
+
+	auto arr_actor2 = vtkSmartPointer<vtkActor>::New();
+	arr_actor2->SetMapper(mapper);
+	//arr_actor2->RotateZ(angleZ);
+	//arr_actor2->RotateX(angleX);
+	arr_actor2->SetPosition(start);
 
 	// Setup render window, renderer, and interactor
 	vtkSmartPointer<vtkRenderer> renderer =
@@ -321,9 +300,18 @@ int test_orientation()
 	vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor =
 		vtkSmartPointer<vtkRenderWindowInteractor>::New();
 	renderWindowInteractor->SetRenderWindow(renderWindow);
+	
+	auto style = vtkSmartPointer<vtkInteractorStyleSwitch>::New();
+	renderWindowInteractor->SetInteractorStyle(style);
+
 	renderer->AddActor(sphere1);
 	renderer->AddActor(sphere2);
 	renderer->AddActor(arr_actor);
+	renderer->AddActor(arr_actor2);
+
+	//axis
+	auto axis = vtkSmartPointer<vtkAxesActor>::New();
+	renderer->AddActor(axis);
 
 	// create coordinate widget
 	vtkSmartPointer<vtkAxesActor> axes =

@@ -190,12 +190,6 @@ void vtkSeedWidgetx::AddPointAction(vtkAbstractWidget *w)
 	{
 		// we are placing a new seed. Just make sure we aren't in a mode which
 		// dictates we've placed all seeds.
-
-#pragma region CUSTOM
-		if (self->GetNumberOfSeeds()>=self->m_num_limit)
-			return;
-#pragma endregion CUSTOM
-
 		self->WidgetState = vtkSeedWidgetx::PlacingSeeds;
 		double e[3]; e[2] = 0.0;
 		e[0] = static_cast<double>(X);
@@ -210,13 +204,24 @@ void vtkSeedWidgetx::AddPointAction(vtkAbstractWidget *w)
 		{
 			return;
 		}
-		int currentHandleNumber = rep->CreateHandle(e);
-		vtkHandleWidget *currentHandle = self->CreateNewHandle();
-		rep->SetSeedDisplayPosition(currentHandleNumber, e);
-		currentHandle->SetEnabled(1);
-		self->InvokeEvent(vtkCommand::PlacePointEvent, &(currentHandleNumber));
-		self->InvokeEvent(vtkCommand::InteractionEvent, &(currentHandleNumber));
-
+		
+#pragma region CUSTOM
+		if (self->GetNumberOfSeeds() >= self->m_num_limit)
+		{
+			int handlex = rep->GetActiveHandle();
+			self->InvokeEvent(vtkCommand::InteractionEvent, &(handlex));
+			return;
+		}
+		else
+		{
+			int currentHandleNumber = rep->CreateHandle(e);
+			vtkHandleWidget *currentHandle = self->CreateNewHandle();
+			rep->SetSeedDisplayPosition(currentHandleNumber, e);
+			currentHandle->SetEnabled(1);
+			self->InvokeEvent(vtkCommand::PlacePointEvent, &(currentHandleNumber));
+			self->InvokeEvent(vtkCommand::InteractionEvent, &(currentHandleNumber));
+		}
+#pragma endregion CUSTOM
 		self->EventCallbackCommand->SetAbortFlag(1);
 		self->Render();
 	}
@@ -328,6 +333,7 @@ void vtkSeedWidgetx::DeleteAction(vtkAbstractWidget *w)
 	// Remove last seed
 	vtkSeedRepresentation *rep =
 		reinterpret_cast<vtkSeedRepresentation*>(self->WidgetRep);
+#pragma region CUSTOM_MODIFY
 	int removeId = rep->GetActiveHandle();
 	if (removeId != -1)
 	{
@@ -343,6 +349,8 @@ void vtkSeedWidgetx::DeleteAction(vtkAbstractWidget *w)
 
 	self->InvokeEvent(vtkCommand::DeleteEvent);
 	self->EventCallbackCommand->SetAbortFlag(1);
+#pragma endregion CUSTOM_MODIFY
+
 	self->Render();
 }
 
