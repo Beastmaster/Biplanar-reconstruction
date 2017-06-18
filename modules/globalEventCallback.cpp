@@ -101,8 +101,10 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 			double pos[3];
 			int id = num_front_seeds - 1;
 			m_FrontalSeedWidget->GetSeedWorldPosition(id, pos);
-			std::vector<double> tmp_pos(pos, pos + sizeof(pos) / sizeof(double));
-			tmp_pos[2] = 100;
+			std::vector<double> tmp_pos(3,0.0);
+			tmp_pos[0] = 100.0;
+			tmp_pos[1] = pos[0];
+			tmp_pos[2] = pos[1];
 			m_coordinate.push_back(tmp_pos);
 
 			// add seeds manually
@@ -120,9 +122,9 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 			m_ProfileSeedWidget->GetSeedWorldPosition(id, pos);
 
 			std::vector<double> tmp_pos(3, 0.0);
-			tmp_pos[1] = pos[1];
-			tmp_pos[2] = pos[0];
-			tmp_pos[0] = 100.0;
+			tmp_pos[0] = pos[0];
+			tmp_pos[1] = 100.0;
+			tmp_pos[2] = pos[1];
 			m_coordinate.push_back(tmp_pos);
 
 			// add seeds manually
@@ -168,18 +170,19 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 				this->m_FrontalSeedWidget->GetSeedWorldPosition(i, pos_frontal);
 				this->m_ProfileSeedWidget->GetSeedWorldPosition(i, pos_profile);
 
-				std::vector<double> tmp;
+				std::vector<double> tmp(3,0.0);
 				if (flag_front_seed == 8)
 				{
-					tmp.push_back(pos_frontal[0]);  // update x axis				
-					tmp.push_back(pos_frontal[1]);  // update y axis
-					tmp.push_back(pos_profile[0]);
+					tmp[0] = pos_profile[0]; 
+					tmp[1] = pos_frontal[0]; // update y axis
+					tmp[2] = pos_frontal[1]; // update z axis
 				}
 				else if (flag_profi_seed == 8)
 				{
-					tmp.push_back(pos_frontal[0]);
-					tmp.push_back(pos_profile[1]);  // update y axis
-					tmp.push_back(pos_profile[0]);  // update z axis
+					tmp[0] = pos_profile[0]; // update x axis
+					tmp[1] = pos_frontal[0];
+					tmp[2] = pos_profile[1]; // update z axis
+
 				}
 				else
 					return;
@@ -187,11 +190,11 @@ void globalEventCallback::Execute(vtkObject*, unsigned long event, void *calldat
 				m_coordinate.push_back(tmp);
 
 				// update display position & convert world coordinate to display coordinate
-				pos_frontal[0] = m_coordinate[i][0];
-				pos_frontal[1] = m_coordinate[i][1];
+				pos_frontal[0] = m_coordinate[i][1];
+				pos_frontal[1] = m_coordinate[i][2];
 
-				pos_profile[0] = m_coordinate[i][2];
-				pos_profile[1] = m_coordinate[i][1];
+				pos_profile[0] = m_coordinate[i][0];
+				pos_profile[1] = m_coordinate[i][2];
 
 				m_FrontalSeedWidget->SetSeedWorldPosition(i, pos_frontal);
 				m_ProfileSeedWidget->SetSeedWorldPosition(i, pos_profile);

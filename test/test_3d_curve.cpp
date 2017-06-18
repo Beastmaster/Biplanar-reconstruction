@@ -38,6 +38,7 @@ http://www.vtk.org/Wiki/VTK/Examples/Cxx/VisualizationAlgorithms/TubesFromSpline
 #include <vtkTransformPolyDataFilter.h>
 #include  <vtkMath.h>
 #include <gdcmSmartPointer.h>
+#include <vtkProperty.h>
 #include <vtkInteractorStyleSwitch.h>
 #include <vtkCylinderSource.h>
 
@@ -249,6 +250,18 @@ int test_orientation()
 		return actor;
 	};
 
+	auto create_cylinder = []()
+	{
+		auto start_sphere = vtkSmartPointer<vtkCylinderSource>::New();
+		start_sphere->SetRadius(0.01);
+		start_sphere->SetHeight(3);
+		start_sphere->Update();
+		auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+		mapper->SetInputData(start_sphere->GetOutput());
+		auto actor = vtkSmartPointer<vtkActor>::New();
+		actor->SetMapper(mapper);
+		return actor;
+	};
 
 
 	double start[3] = { 0,0,0 };
@@ -273,24 +286,6 @@ int test_orientation()
 	double angleZ = acos(vector[0]) * 180 / PI;
 	double angleX = asin(vector[2] / sqrt(vector[1] * vector[1] + vector[2] * vector[2])) * 180 / PI;
 
-	//auto arrow = vtkSmartPointer<vtkArrowSource>::New();
-	auto arrow = vtkSmartPointer<vtkCylinderSource>::New();
-	arrow->SetRadius(0.1);
-	arrow->Update();
-	auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	mapper->SetInputData(arrow->GetOutput());
-	auto arr_actor = vtkSmartPointer<vtkActor>::New();
-	arr_actor->SetMapper(mapper);
-	arr_actor->RotateZ(angleZ);
-	//arr_actor->RotateX(60);
-	arr_actor->SetPosition(start);
-
-	auto arr_actor2 = vtkSmartPointer<vtkActor>::New();
-	arr_actor2->SetMapper(mapper);
-	//arr_actor2->RotateZ(angleZ);
-	//arr_actor2->RotateX(angleX);
-	arr_actor2->SetPosition(start);
-
 	// Setup render window, renderer, and interactor
 	vtkSmartPointer<vtkRenderer> renderer =
 		vtkSmartPointer<vtkRenderer>::New();
@@ -301,17 +296,34 @@ int test_orientation()
 		vtkSmartPointer<vtkRenderWindowInteractor>::New();
 	renderWindowInteractor->SetRenderWindow(renderWindow);
 	
-	auto style = vtkSmartPointer<vtkInteractorStyleSwitch>::New();
-	renderWindowInteractor->SetInteractorStyle(style);
 
 	renderer->AddActor(sphere1);
 	renderer->AddActor(sphere2);
-	renderer->AddActor(arr_actor);
-	renderer->AddActor(arr_actor2);
+
 
 	//axis
-	auto axis = vtkSmartPointer<vtkAxesActor>::New();
-	renderer->AddActor(axis);
+	auto axis1 = create_cylinder();
+	auto axis2 = create_cylinder();
+	auto axis3 = create_cylinder();
+
+	axis2->RotateZ(angleZ-90);
+	axis2->GetProperty()->SetColor(1,0,0);
+	
+	auto trans = vtkSmartPointer<vtkTransform>::New();
+	trans->Identity();
+
+
+	axis3->RotateZ(angleZ-90);
+	axis3->RotateX(angleX);
+
+
+	auto ref_ax = vtkSmartPointer<vtkAxesActor>::New();
+	renderer->AddActor(ref_ax);
+	renderer->AddActor(axis1);
+	renderer->AddActor(axis2);
+	renderer->AddActor(axis3);
+
+
 
 	// create coordinate widget
 	vtkSmartPointer<vtkAxesActor> axes =
