@@ -65,12 +65,7 @@ def main():
     stl_names = glob.glob(os.path.join(stl_dir,"*.stl"))
     list(map(per,stl_names))
 
-def test():
-    items = [1, 2, 3, 4, 5]
-    def sq(x):
-        a=x**2
-        print(a)
-    print(list(map(sq, items)))
+
 
 if __name__ == '__main__':
     #test()
