@@ -256,8 +256,17 @@ int test_orientation()
 		start_sphere->SetRadius(0.01);
 		start_sphere->SetHeight(3);
 		start_sphere->Update();
+
+		// rotate
+		auto trans = vtkSmartPointer<vtkTransform>::New();
+		trans->RotateZ(-90);
+		auto transfilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+		transfilter->SetTransform(trans);
+		transfilter->SetInputData(start_sphere->GetOutput());
+		transfilter->Update();
+
 		auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-		mapper->SetInputData(start_sphere->GetOutput());
+		mapper->SetInputData(transfilter->GetOutput());
 		auto actor = vtkSmartPointer<vtkActor>::New();
 		actor->SetMapper(mapper);
 		return actor;
@@ -282,8 +291,8 @@ int test_orientation()
 	auto sphere2 = create_sphere();
 	sphere2->SetPosition(end);
 
-	double PI = 3.1415926;
-	double angleZ = acos(vector[0]) * 180 / PI;
+	double PIx = 3.1415926;
+	double angleZ = acos(vector[0]) * 180 / PIx;
 	double angleX = asin(vector[2] / sqrt(vector[1] * vector[1] + vector[2] * vector[2])) * 180 / PI;
 
 	// Setup render window, renderer, and interactor
@@ -306,14 +315,14 @@ int test_orientation()
 	auto axis2 = create_cylinder();
 	auto axis3 = create_cylinder();
 
-	axis2->RotateZ(angleZ-90);
+	axis2->RotateZ(angleZ);
 	axis2->GetProperty()->SetColor(1,0,0);
 	
 	auto trans = vtkSmartPointer<vtkTransform>::New();
 	trans->Identity();
 
 
-	axis3->RotateZ(angleZ-90);
+	axis3->RotateZ(angleZ);
 	axis3->RotateX(angleX);
 
 
@@ -321,7 +330,7 @@ int test_orientation()
 	renderer->AddActor(ref_ax);
 	renderer->AddActor(axis1);
 	renderer->AddActor(axis2);
-	renderer->AddActor(axis3);
+	//renderer->AddActor(axis3);
 
 
 

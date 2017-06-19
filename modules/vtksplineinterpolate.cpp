@@ -105,20 +105,10 @@ std::vector<vtkSmartPointer<vtkMatrix4x4> > vtksplineinterpolate::GetTransformat
 		double length = vtkMath::Norm(normalizedX);
 		vtkMath::Normalize(normalizedX);
 
-		// The Z axis is an arbitrary vector cross X
-		double arbitrary[3];
-		arbitrary[0] = 0;//vtkMath::Random(-10, 10);
-		arbitrary[1] = 0;//vtkMath::Random(-10, 10);
-		arbitrary[2] = 1;//vtkMath::Random(-10, 10);
-		vtkMath::Cross(normalizedX, arbitrary, normalizedZ);
-		vtkMath::Normalize(normalizedZ);
 
-		// The Y axis is Z cross X
-		vtkMath::Cross(normalizedZ, normalizedX, normalizedY);
-		vtkSmartPointer<vtkMatrix4x4> matrix =
-			vtkSmartPointer<vtkMatrix4x4>::New();
 
 		// Create the direction cosine matrix
+		auto matrix = vtkSmartPointer<vtkMatrix4x4>::New();
 		matrix->Identity();
 		for (unsigned int i = 0; i < 3; i++)
 		{
@@ -148,6 +138,54 @@ std::vector<vtkSmartPointer<vtkMatrix4x4> > vtksplineinterpolate::GetTransformat
 	}
 
 	return m_rotation;
+}
+
+vtkSmartPointer<vtkMatrix4x4> vtksplineinterpolate::angleX2mat(double angle)
+{
+	auto mat = vtkSmartPointer<vtkMatrix4x4>::New();
+	mat->SetElement(0,0,1.0);
+	mat->SetElement(1,1,cos(angle));
+	mat->SetElement(1, 2, -sin(angle));
+	mat->SetElement(2, 1, sin(angle));
+	mat->SetElement(2, 2, cos(angle));
+	mat->Modified();
+	return mat;
+}
+
+vtkSmartPointer<vtkMatrix4x4> vtksplineinterpolate::angleY2mat(double angle)
+{
+	angle = ANG2RAD(angle);
+	auto mat = vtkSmartPointer<vtkMatrix4x4>::New();
+	mat->SetElement(0, 0, cos(angle));
+	mat->SetElement(0, 2, sin(angle));
+	mat->SetElement(1, 1, 1.0);
+	mat->SetElement(2, 0, -sin(angle));
+	mat->SetElement(2, 2, cos(angle));
+	mat->Modified();
+	return mat;
+}
+
+vtkSmartPointer<vtkMatrix4x4> vtksplineinterpolate::angleZ2mat(double angle)
+{
+	angle = ANG2RAD(angle);
+	auto mat = vtkSmartPointer<vtkMatrix4x4>::New();
+	mat->SetElement(0, 0, cos(angle));
+	mat->SetElement(0, 1, -sin(angle));
+	mat->SetElement(1, 0, sin(angle));
+	mat->SetElement(1, 1, cos(angle));
+	mat->SetElement(2, 2, 1.0);
+	mat->Modified();
+	return mat;
+}
+
+inline void vtksplineinterpolate::rotate_XYZ(double * vec, double * anglex, double * angley, double * anglez)
+{
+	// normalize vector first
+	vtkMath::Normalize(vec);
+
+	*anglez = atan(vec[1] / vec[0]) * 180 / PI;
+	*angley = -asin(vec[2]) * 180 / PI;
+	*anglex = 0.0;
 }
 
 

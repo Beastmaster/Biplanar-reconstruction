@@ -38,6 +38,11 @@ public:
 	// Calculate the orientation on the knot point (transform matrix)
 	std::vector<vtkSmartPointer<vtkMatrix4x4> > GetTransformationList();
 
+	inline static vtkSmartPointer<vtkMatrix4x4> angleX2mat(double angle);
+	inline static vtkSmartPointer<vtkMatrix4x4> angleY2mat(double angle);
+	inline static vtkSmartPointer<vtkMatrix4x4> angleZ2mat(double angle);
+	inline static void rotate_XYZ(double* vec, double* anglex, double* angley, double* anglez);
+
 
 protected:
 	vtksplineinterpolate();
