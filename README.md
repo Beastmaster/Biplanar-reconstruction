@@ -16,7 +16,7 @@ A tool to reconstruct spine from biplanar X-ray or EOS image. Landmarks are sele
 ### 2. Image direction
 ![Coordinate system](resources/CoordinateSystem.JPG)
 
-** Note
+**Note**
 
 The image origin in VTK view locates on up-right corner.
 The origin move to down-left corner by flip vertically.
